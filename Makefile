@@ -1,4 +1,4 @@
-SRC_NAME = $(sort main.c image.c)
+SRC_NAME = $(sort main.c frame.c image.c)
 SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 SDL_PATH = ./SDL2.framework/Versions/Current

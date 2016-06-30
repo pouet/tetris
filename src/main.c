@@ -1,165 +1,248 @@
 #include <stdio.h>
+#include <time.h>
 #include "SDL.h"
 #include "tetris.h"
+#include "frame.h"
 
-void	exit_sdlerror(void) {
-	printf("%s\n", SDL_GetError());
-	exit(EXIT_FAILURE);
+struct gVars_s gVars;
+
+point_t gTetros[NTETS][NBLOCKS] = {
+	{ { 0, -2 }, { 0, -1 }, { 0, 0 }, { 0, 1 } },
+	{ { -1, -1 }, { 0, -1 }, { -1, 0 }, { 0, 0 } },
+	{ { -1, 0 }, { 0, 0 }, { 1, 0 }, { 0, -1 } },
+	{ { -1, 0 }, { 0, 0 }, { 0, -1 }, { 1, -1 } },
+	{ { 1, 0 }, { 0, 0 }, { 0, -1 }, { -1, -1 } },
+	{ { -1, 1 }, { 0, 1 }, { 0, 0 }, { 0, -1 } },
+	{ { 1, 1 }, { 0, 1 }, { 0, 0 }, { 0, -1 } }
+};
+
+void	quitVideo(void) {
+	SDL_DestroyRenderer(gVars.pRen);
+	SDL_DestroyWindow(gVars.pWin);
 }
 
-int		init_video(t_cont *cont) {
-	if (SDL_Init(SDL_INIT_VIDEO) != 0)
-		exit_sdlerror();
-	cont->win = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED,
+int		initVideo(void) {
+	if (SDL_Init(SDL_FLAGS) < 0) {
+		fprintf(stderr, "SDL_Init : %s\n", SDL_GetError());
+		return -1;
+	}
+	atexit(SDL_Quit);
+
+	gVars.pWin = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED, WIN_W, WIN_H, 0);
-	if (cont->win == NULL)
-		exit_sdlerror();
-	cont->ren = SDL_CreateRenderer(cont->win, -1, SDL_RENDERER_ACCELERATED);
-	if (cont->ren == NULL)
-		exit_sdlerror();
-	return (0);
-}
-
-void		copy_surface_to_texture(SDL_Texture *tex, SDL_Surface *bmp)
-{
-	SDL_Rect	r;
-	void		*pixels;
-	int			pitch;
-
-	SDL_LockTexture(tex, NULL, &pixels, &pitch);
-	for (r.y = 0; r.y < bmp->h; r.y++) {
-		for (r.x = 0; r.x < bmp->w; r.x++) {
-			*(Uint32 *)((char *)pixels + (r.y * pitch + r.x * 4)) =
-				*(Uint32 *)((char *)bmp->pixels +
-						(r.y * bmp->pitch + r.x * bmp->format->BytesPerPixel));
-		}
+	if (gVars.pWin == NULL) {
+		fprintf(stderr, "SDL_Init : %s\n", SDL_GetError());
+		return -1;
 	}
-	SDL_UnlockTexture(tex);
+
+	gVars.pRen = SDL_CreateRenderer(gVars.pWin, -1, SDL_RENDERER_ACCELERATED);
+	if (gVars.pRen == NULL) {
+		fprintf(stderr, "SDL_Init : %s\n", SDL_GetError());
+		return -1;
+	}
+	SDL_SetRenderDrawColor(gVars.pRen, 0, 255, 0, 255);
+
+	return 0;
+}
+#include <unistd.h>
+SDL_Texture *loadBMP(char *s) {
+	SDL_Surface *pSfc;
+	SDL_Texture *pTex;
+
+	pSfc = SDL_LoadBMP(s);
+	if (pSfc == NULL) {
+		fprintf(stderr, "LoadBMP failed: %s\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
+	pTex = SDL_CreateTextureFromSurface(gVars.pRen, pSfc);
+	if (pTex == NULL) {
+		fprintf(stderr, "CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		exit(1);
+	}
+	SDL_FreeSurface(pSfc);
+	return pTex;
 }
 
-SDL_Texture	*load_bmp(t_cont *cont, char *name) {
-	SDL_Surface	*bmp;
-	SDL_Texture	*tex;
-
-	bmp = SDL_LoadBMP(name);
-	if (bmp == NULL)
-		exit_sdlerror();
-	tex = SDL_CreateTexture(cont->ren, SDL_PIXELFORMAT_ARGB8888,
-			SDL_TEXTUREACCESS_STREAMING, bmp->w, bmp->h);
-	if (tex == NULL)
-		exit_sdlerror();
-	copy_surface_to_texture(tex, bmp);
-	SDL_FreeSurface(bmp);
-	return (tex);
+int		initGVars(void) {
+	gVars.nScrW = WIN_W;
+	gVars.nScrH = WIN_H;
+	gVars.pKeyb = SDL_GetKeyboardState(NULL);
+	gVars.pTetsImg = loadBMP("gfx/tets.bmp");
+	gVars.pIntroImg = loadBMP("gfx/intro.bmp");
+	return 0;
 }
 
-void	quit_video(t_cont *cont) {
-	SDL_DestroyRenderer(cont->ren);
-	SDL_DestroyWindow(cont->win);
-	SDL_Quit();
+int		init(void) {
+	if (initVideo() < 0)
+		return -1;
+	srand(time(NULL));
+	if (initGVars())
+		return -1;
+	return 0;
 }
 
-void	render_texture(t_cont *cont, SDL_Texture *tex, int x, int y) {
-	SDL_Rect dst;
+void	renderRexture(SDL_Texture *pTex, int x, int y) {
+	SDL_Rect rDst;
+	SDL_Rect rSrc;
 
-	dst.x = x;
-	dst.y = y;
-	SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
-//	SDL_RenderCopy(cont->ren, tex, NULL, &dst);
-	SDL_RenderCopy(cont->ren, tex, NULL, NULL);
+	rSrc.x = 64;
+	rSrc.y = 0;
+	rSrc.w = 32;
+	rSrc.h = 32;
+
+	rDst.x = x;
+	rDst.y = y;
+	rDst.w = 32;
+	rDst.h = 32;
+	//SDL_QueryTexture(pTex, NULL, NULL, &rDst.w, &rDst.h);
+	SDL_RenderCopy(gVars.pRen, pTex, &rSrc, &rDst);
+//	SDL_RenderCopy(gVars.pRen, pTex, NULL, NULL);
 }
 
-void	load_textures(t_cont *cont) {
-	static char *name[N_TEXTURES] = {
-		"textures"
-	};
+void drawTetros(game_t *game) {
 	int i;
-
-	for (i = 0; i < N_TEXTURES; i++) {
-		cont->tex[i].tex = load_bmp(cont, name[i]);
-		SDL_QueryTexture(cont->tex[i].tex, NULL, NULL,
-				&cont->tex[i].w, &cont->tex[i].h);
-		if (SDL_LockTexture(cont->tex[i].tex, NULL,
-					(void **)&cont->tex[i].pixels, &cont->tex[i].pitch) < 0)
-			exit_sdlerror();
+int j = 6;
+	for (i = 0; i < NBLOCKS; i++) {
+		int x = 500 + (SZBLOCK * gTetros[j][i].x);
+		int y = 500 + (SZBLOCK * gTetros[j][i].y);
+		renderRexture(gVars.pTetsImg, x, y);
 	}
 }
 
-void	init_var(t_cont *cont) {
-	cont->ticks = SDL_GetTicks();
-	cont->keyb = SDL_GetKeyboardState(NULL);
-	cont->img.tex = SDL_CreateTexture(cont->ren, SDL_PIXELFORMAT_ARGB8888,
-			SDL_TEXTUREACCESS_STREAMING, WIN_W, WIN_H);
-	SDL_QueryTexture(cont->img.tex, NULL, NULL, &cont->img.w, &cont->img.h);
-	load_textures(cont);
-	cont->pixels = malloc(WIN_H * WIN_W * sizeof(Uint32));
+void renderFlip(void) {
+	// draw on the screen
+	frameWait();
 }
 
-void		framewait(t_cont *cont) {
-	unsigned	now;
 
-	while (1) {
-		now = SDL_GetTicks() - cont->ticks;
-		if (now >= FPS_DFLT)
-			break ;
-		SDL_Delay(3);
-	}
-	cont->ticks = SDL_GetTicks();
-	cont->ticks++;
+// intro
+
+Sint32 menuIntroInit(void *pArgs) {
+	SDL_SetRenderDrawBlendMode(gVars.pRen, SDL_BLENDMODE_NONE);
+	SDL_SetTextureBlendMode(gVars.pIntroImg, SDL_BLENDMODE_BLEND);
+	(void)pArgs;
+	return 0;
 }
 
-int		update_events(t_cont *cont) {
+Sint32 menuIntroMain(void *pArgs) {
+	static int i = SDL_ALPHA_TRANSPARENT;
+	
+	SDL_SetRenderDrawColor(gVars.pRen, 0xff, 0xff, 0xff, 0xff);
+	SDL_RenderClear(gVars.pRen);
+
+	if (SDL_SetTextureAlphaMod(gVars.pIntroImg, i) < 0)
+		puts("marche pas..");
+	SDL_RenderCopy(gVars.pRen, gVars.pIntroImg, NULL, NULL);
+	SDL_RenderPresent(gVars.pRen);
+	frameWait();
+	i += 3;
+	if (i > SDL_ALPHA_OPAQUE)
+		i = SDL_ALPHA_OPAQUE;
+	(void)pArgs;
+	return 0;
+}
+
+Sint32 menuIntroRelease(void *pArgs) {
+	(void)pArgs;
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+int		eventHandler(void) {
 	SDL_Event ev;
 
 	while (SDL_PollEvent(&ev)) {
 		if (ev.type == SDL_QUIT)
-			return (1);
+			return 1;
 	}
-	return (0);
+	if (gVars.pKeyb[SDL_SCANCODE_ESCAPE])
+		return 1;
+	return 0;
 }
 
-void	lock_textures(t_cont *cont) {
-	if (SDL_LockTexture(cont->img.tex, NULL, (void **)&cont->img.pixels,
-				&cont->img.pitch) < 0)
-		exit_sdlerror();
-}
+menu_e menuLoop(pFct pInit, pFct pMain, pFct pRelease, void *pArgs) {
+	menu_e nMenu;
 
-void	unlock_textures(t_cont *cont) {
-	SDL_UnlockTexture(cont->img.tex);
-}
+	if (pInit(pArgs) < 0)
+		return MENU_QUIT;
 
-void	do_all(t_cont *cont) {
-	if (cont->keyb[SDL_SCANCODE_U]) {
-		if (cont->fullscreen)
-			SDL_SetWindowFullscreen(cont->win, 0);
-		else
-			SDL_SetWindowFullscreen(cont->win, SDL_WINDOW_FULLSCREEN);
-		cont->fullscreen = !cont->fullscreen;
+	franeInit();
+	nMenu = MENU_NULL;
+	while (nMenu == MENU_NULL) {
+		if (eventHandler() != 0) {
+			nMenu = MENU_QUIT;
+			break;
+		}
+		nMenu = pMain(pArgs);
+		renderFlip();
 	}
+
+	if (pRelease(pArgs) < 0)
+		return MENU_QUIT;
+	return nMenu;
 }
 
-int		main_loop(t_cont *cont) {
-	while (1) {
-		if (update_events(cont) || cont->keyb[SDL_SCANCODE_ESCAPE])
-			break ;
+int mainLoop(void) {
+	menu_e nState;
+	int nLoop;
 
-		do_all(cont);
-		SDL_UpdateTexture(cont->img.tex, NULL, cont->pixels, cont->img.pitch);
-		SDL_RenderCopy(cont->ren, cont->img.tex, NULL, NULL);
-		SDL_RenderPresent(cont->ren);
-		framewait(cont);
+	nState = MENU_INTRO;
+	nLoop = 1;
+	while (nLoop) {
+		switch (nState) {
+			case MENU_INTRO:
+				nState = menuLoop(menuIntroInit, menuIntroMain, menuIntroRelease, NULL);
+				break;
+
+			case MENU_MAIN:
+				break;
+
+			case MENU_OPTS:
+				break;
+
+			case MENU_HISCORES:
+				break;
+
+			case MENU_GAME:
+				break;
+
+			case MENU_QUIT:
+				nLoop = 0;
+				break;
+
+			default:
+				nState = MENU_QUIT;
+				break;
+		}
+//		if (eventHandler() || gVars.pKeyb[SDL_SCANCODE_ESCAPE])
+//			break ;
+
+//		SDL_UpdateTexture(gVars.img.tex, NULL, gVars.pixels, gVars.img.pitch);
+//		SDL_RenderCopy(gVars.pRen, gVars.img.tex, NULL, NULL);
+
+//		SDL_RenderClear(gVars.pRen); // Clear the entire screen
+//		game_t g;
+//		drawTetros(&g);
+		//renderRexture(gVars.pTetsImg, 0, 0);
+//		SDL_RenderPresent(gVars.pRen);
+//		frameWait();
 	}
-	return (0);
+	return 0;
 }
 
 int		main(void) {
-	t_cont	cont;
+	if (init() < 0)
+		return EXIT_FAILURE;
 
-	bzero(&cont, sizeof(cont));
-	if (init_video(&cont) < 0)
-		return (EXIT_FAILURE);
-	init_var(&cont);
-	main_loop(&cont);
-	quit_video(&cont);
-	return (0);
+	mainLoop();
+	quitVideo();
+	return 0;
 }

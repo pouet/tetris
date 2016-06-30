@@ -1,47 +1,82 @@
 #ifndef TETRIS_H
-# define TETRIS_H
+#define TETRIS_H
 
-# include "SDL.h"
+#include "SDL.h"
+ 
+/* ********************************* */
+/* *          Constantes           * */
+/* ********************************* */
 
-# define TITLE "Tetris"
+#define TITLE "Tetris"
 
 enum {
+	SDL_FLAGS = SDL_INIT_VIDEO,
 	FPS = 60,
 	FPS_DFLT = 1000 / FPS
 };
 
 enum {
 	WIN_W = 1024,
-	WIN_H = 768,
-	N_TEXTURES
+	WIN_H = 768
 };
 
-typedef struct {
-	int			x;
-	int			y;
-}				t_point;
+enum {
+	NGRIDX = 10,
+	NGRIDY = 22,
+	NBLOCKS = 4,
+	SZBLOCK = 32
+};
 
-typedef struct {
-	SDL_Texture		*tex;
-	Uint32			*pixels;
-	int				pitch;
-	int				w;
-	int				h;
-}				t_texture;
+enum {
+	TET_I,
+	TET_O,
+	TET_T,
+	TET_S,
+	TET_Z,
+	TET_J,
+	TET_L,
+	NTETS
+};
 
-typedef struct {
-	SDL_Window		*win;
-	SDL_Renderer	*ren;
-	int				fullscreen;
-	Uint32			*pixels;
+typedef enum {
+	MENU_NULL,
+	MENU_INTRO,
+	MENU_MAIN,
+	MENU_OPTS,
+	MENU_HISCORES,
+	MENU_GAME,
+	MENU_QUIT
+} menu_e;
 
-	t_texture		tex[N_TEXTURES];
-	t_texture		img;
-	const Uint8		*keyb;
+typedef Sint32 (*pFct)(void *);
+ 
+/* ********************************* */
+/* *          Structures           * */
+/* ********************************* */
 
-	int				ticks;
-}				t_cont;
+struct gVars_s {
+	SDL_Window		*pWin;
+	SDL_Renderer	*pRen;
+	Uint32			nScrW;
+	Uint32			nScrH;
+	const Uint8		*pKeyb;
 
-void	put_pixel(Uint32 *pix32, int x, int y, unsigned col);
+	SDL_Texture		*pTetsImg;
+	SDL_Texture		*pIntroImg;
+};
+
+typedef struct point_s {
+	Uint32 x;
+	Uint32 y;
+} point_t;
+
+typedef struct game_s {
+} game_t;
+
+/* ********************************* */
+/* *           Globales            * */
+/* ********************************* */
+ 
+extern struct gVars_s gVars;
 
 #endif

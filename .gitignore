@@ -34,3 +34,6 @@
 
 # Vim files
 *.swp
+
+# Hidden files
+.*
