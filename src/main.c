@@ -3,18 +3,9 @@
 #include "SDL.h"
 #include "tetris.h"
 #include "frame.h"
+#include "menu.h"
 
 struct gVars_s gVars;
-
-point_t gTetros[NTETS][NBLOCKS] = {
-	{ { 0, -2 }, { 0, -1 }, { 0, 0 }, { 0, 1 } },
-	{ { -1, -1 }, { 0, -1 }, { -1, 0 }, { 0, 0 } },
-	{ { -1, 0 }, { 0, 0 }, { 1, 0 }, { 0, -1 } },
-	{ { -1, 0 }, { 0, 0 }, { 0, -1 }, { 1, -1 } },
-	{ { 1, 0 }, { 0, 0 }, { 0, -1 }, { -1, -1 } },
-	{ { -1, 1 }, { 0, 1 }, { 0, 0 }, { 0, -1 } },
-	{ { 1, 1 }, { 0, 1 }, { 0, 0 }, { 0, -1 } }
-};
 
 void	quitVideo(void) {
 	SDL_DestroyRenderer(gVars.pRen);
@@ -40,11 +31,13 @@ int		initVideo(void) {
 		fprintf(stderr, "SDL_Init : %s\n", SDL_GetError());
 		return -1;
 	}
-	SDL_SetRenderDrawColor(gVars.pRen, 0, 255, 0, 255);
+
+	SDL_SetRenderDrawBlendMode(gVars.pRen, SDL_BLENDMODE_NONE);
+	SDL_SetRenderDrawColor(gVars.pRen, 0xff, 0xff, 0xff, 0x00);
 
 	return 0;
 }
-#include <unistd.h>
+
 SDL_Texture *loadBMP(char *s) {
 	SDL_Surface *pSfc;
 	SDL_Texture *pTex;
@@ -60,6 +53,7 @@ SDL_Texture *loadBMP(char *s) {
 		exit(1);
 	}
 	SDL_FreeSurface(pSfc);
+	SDL_SetTextureBlendMode(pTex, SDL_BLENDMODE_BLEND);
 	return pTex;
 }
 
@@ -69,6 +63,7 @@ int		initGVars(void) {
 	gVars.pKeyb = SDL_GetKeyboardState(NULL);
 	gVars.pTetsImg = loadBMP("gfx/tets.bmp");
 	gVars.pIntroImg = loadBMP("gfx/intro.bmp");
+	gVars.pTetrisLogo = loadBMP("gfx/tetris_logo.bmp");
 	return 0;
 }
 
@@ -81,71 +76,13 @@ int		init(void) {
 	return 0;
 }
 
-void	renderRexture(SDL_Texture *pTex, int x, int y) {
-	SDL_Rect rDst;
-	SDL_Rect rSrc;
-
-	rSrc.x = 64;
-	rSrc.y = 0;
-	rSrc.w = 32;
-	rSrc.h = 32;
-
-	rDst.x = x;
-	rDst.y = y;
-	rDst.w = 32;
-	rDst.h = 32;
-	//SDL_QueryTexture(pTex, NULL, NULL, &rDst.w, &rDst.h);
-	SDL_RenderCopy(gVars.pRen, pTex, &rSrc, &rDst);
-//	SDL_RenderCopy(gVars.pRen, pTex, NULL, NULL);
-}
-
-void drawTetros(game_t *game) {
-	int i;
-int j = 6;
-	for (i = 0; i < NBLOCKS; i++) {
-		int x = 500 + (SZBLOCK * gTetros[j][i].x);
-		int y = 500 + (SZBLOCK * gTetros[j][i].y);
-		renderRexture(gVars.pTetsImg, x, y);
-	}
-}
 
 void renderFlip(void) {
-	// draw on the screen
-	frameWait();
-}
-
-
-// intro
-
-Sint32 menuIntroInit(void *pArgs) {
-	SDL_SetRenderDrawBlendMode(gVars.pRen, SDL_BLENDMODE_NONE);
-	SDL_SetTextureBlendMode(gVars.pIntroImg, SDL_BLENDMODE_BLEND);
-	(void)pArgs;
-	return 0;
-}
-
-Sint32 menuIntroMain(void *pArgs) {
-	static int i = SDL_ALPHA_TRANSPARENT;
-	
-	SDL_SetRenderDrawColor(gVars.pRen, 0xff, 0xff, 0xff, 0xff);
-	SDL_RenderClear(gVars.pRen);
-
-	if (SDL_SetTextureAlphaMod(gVars.pIntroImg, i) < 0)
-		puts("marche pas..");
-	SDL_RenderCopy(gVars.pRen, gVars.pIntroImg, NULL, NULL);
 	SDL_RenderPresent(gVars.pRen);
 	frameWait();
-	i += 3;
-	if (i > SDL_ALPHA_OPAQUE)
-		i = SDL_ALPHA_OPAQUE;
-	(void)pArgs;
-	return 0;
 }
 
-Sint32 menuIntroRelease(void *pArgs) {
-	(void)pArgs;
-	return 0;
-}
+
 
 
 
@@ -191,6 +128,8 @@ menu_e menuLoop(pFct pInit, pFct pMain, pFct pRelease, void *pArgs) {
 }
 
 int mainLoop(void) {
+	intro_t intro;
+	menu_t menu;
 	menu_e nState;
 	int nLoop;
 
@@ -199,10 +138,11 @@ int mainLoop(void) {
 	while (nLoop) {
 		switch (nState) {
 			case MENU_INTRO:
-				nState = menuLoop(menuIntroInit, menuIntroMain, menuIntroRelease, NULL);
+				nState = menuLoop(menuIntroInit, menuIntroMain, menuIntroRelease, &intro);
 				break;
 
 			case MENU_MAIN:
+				nState = menuLoop(menuMainInit, menuMainMain, menuMainRelease, &menu);
 				break;
 
 			case MENU_OPTS:

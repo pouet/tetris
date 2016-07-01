@@ -12,7 +12,8 @@
 enum {
 	SDL_FLAGS = SDL_INIT_VIDEO,
 	FPS = 60,
-	FPS_DFLT = 1000 / FPS
+	FPS_DFLT = 1000 / FPS,
+	FPS_1S = 1000
 };
 
 enum {
@@ -63,6 +64,7 @@ struct gVars_s {
 
 	SDL_Texture		*pTetsImg;
 	SDL_Texture		*pIntroImg;
+	SDL_Texture		*pTetrisLogo;
 };
 
 typedef struct point_s {
@@ -78,5 +80,11 @@ typedef struct game_s {
 /* ********************************* */
  
 extern struct gVars_s gVars;
+
+/* ********************************* */
+/* *          Prototypes           * */
+/* ********************************* */
+
+void renderFlip(void);
 
 #endif
