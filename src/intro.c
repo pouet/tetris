@@ -3,8 +3,6 @@
 #include "frame.h"
 #include "menu.h"
 
-struct gVars_s gVars;
-
 Sint32 menuIntroInit(void *pArgs) {
 	intro_t *this = pArgs;
 
@@ -12,6 +10,8 @@ Sint32 menuIntroInit(void *pArgs) {
 	this->nFade = SDL_ALPHA_TRANSPARENT;
 	this->state = INTRO_FADEIN;
 	this->ticks = 0;
+
+	SDL_SetRenderDrawColor(gVars.pRen, 0xff, 0xff, 0xff, 0x00);
 
 	return 0;
 }
@@ -44,7 +44,6 @@ Sint32 menuIntroMain(void *pArgs) {
 			return MENU_QUIT;
 	}
 
-	SDL_RenderClear(gVars.pRen);
 	SDL_SetTextureAlphaMod(gVars.pIntroImg, this->nFade);
 	SDL_RenderCopy(gVars.pRen, gVars.pIntroImg, NULL, NULL);
 

@@ -31,7 +31,14 @@ typedef struct intro_s {
 
 typedef struct menu_s {
 	Uint32 state;
-	Uint32 select;
+	Sint32 nSelect;
+	Sint32 nDelay;
+	Sint32 nOffSelect;
+	Sint32 nOffIncr;
+
+	SDL_Texture **pTex;
+	Sint32 *pnVal;
+	Sint32 nSizeMenu;
 } menu_t;
 
 /* ********************************* */

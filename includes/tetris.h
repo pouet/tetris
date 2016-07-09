@@ -9,6 +9,8 @@
 
 #define TITLE "Tetris"
 
+#define SURFACE_TRANSPARENT_COLOR 0x00FFFFFF
+
 enum {
 	SDL_FLAGS = SDL_INIT_VIDEO,
 	FPS = 60,
@@ -21,24 +23,6 @@ enum {
 	WIN_H = 768
 };
 
-enum {
-	NGRIDX = 10,
-	NGRIDY = 22,
-	NBLOCKS = 4,
-	SZBLOCK = 32
-};
-
-enum {
-	TET_I,
-	TET_O,
-	TET_T,
-	TET_S,
-	TET_Z,
-	TET_J,
-	TET_L,
-	NTETS
-};
-
 typedef enum {
 	MENU_NULL,
 	MENU_INTRO,
@@ -49,31 +33,48 @@ typedef enum {
 	MENU_QUIT
 } menu_e;
 
+enum {
+	KEY_UP,
+	KEY_DOWN,
+	KEY_LEFT,
+	KEY_RIGHT,
+	KEY_SPACE,
+	KEY_P,
+	KEY_C,
+	KEY_LAST
+};
+
+enum {
+	KEY_NONE = 0,
+	KEY_PRESSED = 1,
+	KEY_DELAY = 2,
+	KEY_MAX_DELAY = 10
+};
+
 typedef Sint32 (*pFct)(void *);
  
 /* ********************************* */
 /* *          Structures           * */
 /* ********************************* */
 
+//typedef struct {
+//	Uint32 nKey;
+//	Sint32 nDelay;
+//} keyb_t;
+
 struct gVars_s {
 	SDL_Window		*pWin;
 	SDL_Renderer	*pRen;
 	Uint32			nScrW;
 	Uint32			nScrH;
+	Sint32			nKeyb[KEY_LAST];
 	const Uint8		*pKeyb;
 
 	SDL_Texture		*pTetsImg;
+	SDL_Texture		*pFont;
 	SDL_Texture		*pIntroImg;
 	SDL_Texture		*pTetrisLogo;
 };
-
-typedef struct point_s {
-	Uint32 x;
-	Uint32 y;
-} point_t;
-
-typedef struct game_s {
-} game_t;
 
 /* ********************************* */
 /* *           Globales            * */
@@ -86,5 +87,6 @@ extern struct gVars_s gVars;
 /* ********************************* */
 
 void renderFlip(void);
+void blitTexture(SDL_Texture *pTex, int x, int y, SDL_Rect *rClip);
 
 #endif

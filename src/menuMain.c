@@ -2,27 +2,81 @@
 #include "tetris.h"
 #include "frame.h"
 #include "menu.h"
-
-struct gVars_s gVars;
+#include "font.h"
 
 Sint32 menuMainInit(void *pArgs) {
 	menu_t *this = pArgs;
+	struct {
+		char *pName;
+		Uint32 nVal;
+	} pTab[] = {
+		{ "Play", MENU_GAME },
+		{ "High scores", MENU_HISCORES },
+		{ "Options", MENU_OPTS },
+		{ "Quit", MENU_QUIT },
+	};
+	int nSize = sizeof pTab / sizeof *pTab;
+	int i;
 
+	SDL_SetRenderDrawColor(gVars.pRen, 0x00, 0x00, 0xFF, 0x00);
 	bzero(this, sizeof(*this));
-//	this->nFade = SDL_ALPHA_TRANSPARENT;
-//	this->state = INTRO_FADEIN;
-//	this->ticks = 0;
+
+	this->nSizeMenu = nSize;
+	this->pTex = malloc(nSize * sizeof *this->pTex);
+	this->pnVal = malloc(nSize * sizeof *this->pnVal);
+	for (i = 0; i < nSize; i++) {
+		this->pTex[i] = createFont(pTab[i].pName, 0);
+		this->pnVal[i] = pTab[i].nVal;
+	}
+	this->nOffIncr = 2;
 
 	return 0;
 }
 
+Sint32 menuMainEvents(void *pArgs) {
+	menu_t *this = pArgs;
+
+	if (this->nDelay <= 0) {
+		if (gVars.pKeyb[SDL_SCANCODE_UP]) {
+			this->nSelect--;
+			this->nDelay = 10;
+		}
+		else if (gVars.pKeyb[SDL_SCANCODE_DOWN]) {
+			this->nSelect++;
+			this->nDelay = 10;
+		}
+		if (this->nSelect < 0)
+			this->nSelect = this->nSizeMenu - 1;
+		else if (this->nSelect >= this->nSizeMenu)
+			this->nSelect = 0;
+	}
+	else if (this->nDelay > 0)
+		this->nDelay--;
+	if (gVars.pKeyb[SDL_SCANCODE_RETURN])
+		return 0;
+
+	return -1;
+}
+
+void menuMainDraw(void *pArgs) {
+	menu_t *this = pArgs;
+	int i;
+
+	SDL_RenderCopy(gVars.pRen, gVars.pTetrisLogo, NULL, NULL);
+
+	for (i = 0; i < this->nSizeMenu; i++) {
+		if (i == this->nSelect) {
+			blitTexture(this->pTex[i], 10 + this->nOffSelect, 10 + i * 42, NULL);
+			this->nOffSelect = this->nOffSelect + this->nOffIncr;
+			if (this->nOffSelect < -64 || this->nOffSelect > 64)
+				this->nOffIncr *= -1;
+		}
+		else
+			blitTexture(this->pTex[i], 10, 10 + i * 42, NULL);
+	}
+}
+
 Sint32 menuMainMain(void *pArgs) {
-	static char tMenuName[] = {
-		"Play",
-		"High scores",
-		"Options",
-		"Quit"
-	};
 	menu_t *this = pArgs;
 
 	/*
@@ -47,22 +101,22 @@ Sint32 menuMainMain(void *pArgs) {
 		default:
 			return MENU_QUIT;
 	}
-
-	SDL_RenderClear(gVars.pRen);
-	SDL_SetTextureAlphaMod(gVars.pIntroImg, this->nFade);
-	SDL_RenderCopy(gVars.pRen, gVars.pIntroImg, NULL, NULL);
 */
 
-	SDL_RenderClear(gVars.pRen);
-	SDL_RenderCopy(gVars.pRen, gVars.pTetrisLogo, NULL, NULL);
+	if (menuMainEvents(pArgs) >= 0)
+		return this->pnVal[this->nSelect];
+	menuMainDraw(pArgs);
 
 	return MENU_NULL;
 }
 
 Sint32 menuMainRelease(void *pArgs) {
 	menu_t *this = pArgs;
+	int i;
 
-	(void)this;
-
+	for (i = 0; i < this->nSizeMenu; i++)
+		SDL_DestroyTexture(this->pTex[i]);
+	free(this->pTex);
+	free(this->pnVal);
 	return 0;
 }

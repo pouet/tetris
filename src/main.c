@@ -4,6 +4,7 @@
 #include "tetris.h"
 #include "frame.h"
 #include "menu.h"
+#include "game.h"
 
 struct gVars_s gVars;
 
@@ -47,6 +48,7 @@ SDL_Texture *loadBMP(char *s) {
 		fprintf(stderr, "LoadBMP failed: %s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
+	SDL_SetColorKey(pSfc, SDL_TRUE, SURFACE_TRANSPARENT_COLOR);
 	pTex = SDL_CreateTextureFromSurface(gVars.pRen, pSfc);
 	if (pTex == NULL) {
 		fprintf(stderr, "CreateTextureFromSurface failed: %s\n", SDL_GetError());
@@ -62,6 +64,7 @@ int		initGVars(void) {
 	gVars.nScrH = WIN_H;
 	gVars.pKeyb = SDL_GetKeyboardState(NULL);
 	gVars.pTetsImg = loadBMP("gfx/tets.bmp");
+	gVars.pFont = loadBMP("gfx/font.bmp");
 	gVars.pIntroImg = loadBMP("gfx/intro.bmp");
 	gVars.pTetrisLogo = loadBMP("gfx/tetris_logo.bmp");
 	return 0;
@@ -79,7 +82,17 @@ int		init(void) {
 
 void renderFlip(void) {
 	SDL_RenderPresent(gVars.pRen);
+	SDL_RenderClear(gVars.pRen);
 	frameWait();
+}
+
+void blitTexture(SDL_Texture *pTex, int x, int y, SDL_Rect *rClip) {
+	SDL_Rect r;
+
+	r.x = x;
+	r.y = y;
+	SDL_QueryTexture(pTex, NULL, NULL, &r.w, &r.h);
+	SDL_RenderCopy(gVars.pRen, pTex, rClip, &r);
 }
 
 
@@ -92,13 +105,45 @@ void renderFlip(void) {
 
 
 
-
+/* SDLK_LAST no more exists... leave me alone... */
 int		eventHandler(void) {
 	SDL_Event ev;
 
 	while (SDL_PollEvent(&ev)) {
 		if (ev.type == SDL_QUIT)
 			return 1;
+		else if (ev.key.type == SDL_KEYDOWN && ev.key.repeat == 0) {
+			if (ev.key.keysym.sym == SDLK_SPACE)
+				gVars.nKeyb[KEY_SPACE] = KEY_PRESSED;
+			if (ev.key.keysym.sym == SDLK_UP)
+				gVars.nKeyb[KEY_UP] = KEY_PRESSED;
+			if (ev.key.keysym.sym == SDLK_DOWN)
+				gVars.nKeyb[KEY_DOWN] = KEY_PRESSED;
+			if (ev.key.keysym.sym == SDLK_LEFT)
+				gVars.nKeyb[KEY_LEFT] = KEY_PRESSED;
+			if (ev.key.keysym.sym == SDLK_RIGHT)
+				gVars.nKeyb[KEY_RIGHT] = KEY_PRESSED;
+			if (ev.key.keysym.sym == SDLK_p)
+				gVars.nKeyb[KEY_P] = KEY_PRESSED;
+			if (ev.key.keysym.sym == SDLK_c)
+				gVars.nKeyb[KEY_C] = KEY_PRESSED;
+		}
+		else if (ev.type == SDL_KEYUP) {
+			if (ev.key.keysym.sym == SDLK_SPACE)
+				gVars.nKeyb[KEY_SPACE] = KEY_NONE;
+			if (ev.key.keysym.sym == SDLK_UP)
+				gVars.nKeyb[KEY_UP] = KEY_NONE;
+			if (ev.key.keysym.sym == SDLK_DOWN)
+				gVars.nKeyb[KEY_DOWN] = KEY_NONE;
+			if (ev.key.keysym.sym == SDLK_LEFT)
+				gVars.nKeyb[KEY_LEFT] = KEY_NONE;
+			if (ev.key.keysym.sym == SDLK_RIGHT)
+				gVars.nKeyb[KEY_RIGHT] = KEY_NONE;
+			if (ev.key.keysym.sym == SDLK_p)
+				gVars.nKeyb[KEY_P] = KEY_NONE;
+			if (ev.key.keysym.sym == SDLK_c)
+				gVars.nKeyb[KEY_C] = KEY_NONE;
+		}
 	}
 	if (gVars.pKeyb[SDL_SCANCODE_ESCAPE])
 		return 1;
@@ -130,10 +175,12 @@ menu_e menuLoop(pFct pInit, pFct pMain, pFct pRelease, void *pArgs) {
 int mainLoop(void) {
 	intro_t intro;
 	menu_t menu;
+	game_t game;
 	menu_e nState;
 	int nLoop;
 
-	nState = MENU_INTRO;
+//	nState = MENU_INTRO;
+	nState = MENU_GAME;
 	nLoop = 1;
 	while (nLoop) {
 		switch (nState) {
@@ -152,6 +199,7 @@ int mainLoop(void) {
 				break;
 
 			case MENU_GAME:
+				nState = menuLoop(gameInit, gameMain, gameRelease, &game);
 				break;
 
 			case MENU_QUIT:
