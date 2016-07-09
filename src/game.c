@@ -227,7 +227,7 @@ Sint32 gameRelease(void *pArgs) {
 	return 0;
 }
 
-void blitOneBlock(Sint32 nTet, int i, int j) {
+void blitOneBlock(Sint32 nTet, int row, int col, int y, int x) {
 	SDL_Rect rClip;
 	SDL_Rect r;
 
@@ -238,8 +238,10 @@ void blitOneBlock(Sint32 nTet, int i, int j) {
 	rClip.w = r.w;
 	rClip.h = r.w;
 
-	r.x = j * r.w;
-	r.y = i * r.w;
+//	r.x = (x + col) * r.w;
+//	r.y = (y + row) * r.w;
+	r.x = col + x * r.w;
+	r.y = row + y * r.w;
 	SDL_RenderCopy(gVars.pRen, gVars.pTetsImg, &rClip, &r);
 }
 
@@ -249,25 +251,46 @@ void gameDrawTetro(Sint32 nTet, Sint32 nRot, int row, int col) {
 	for (i = 0; i < TET_HT; i++) {
 		for (j = 0; j < TET_LG; j++) {
 			if (gtTetros[nTet][nRot][i][j])
-				blitOneBlock(nTet, row + i, col + j);
+				blitOneBlock(nTet, row, col, i, j);
 		}
 	}
 }
 
 void gameDraw(game_t *this) {
+	SDL_Rect r;
 	int i, j;
 
+	SDL_SetRenderDrawColor(gVars.pRen, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(gVars.pRen);
+
+	SDL_SetRenderDrawColor(gVars.pRen, 0x7F, 0x7F, 0x7F, 0x7F);
+	r.x = 0;
+	r.y = 0;
+	r.w = GRID_LG * 32;
+	r.h = GRID_HT * 32;
+	SDL_RenderFillRect(gVars.pRen, &r);
+	r.x = TET_NEXT_OFFX - 16;
+	r.y = TET_NEXT_OFFY - 16;
+	r.w = TET_LG * 32 + 32;
+	r.h = TET_HT * 32;
+	SDL_RenderFillRect(gVars.pRen, &r);
 
 	for (i = 0; i < GRID_HT; i++) {
 		for (j = 0; j < GRID_LG; j++) {
 			if (this->tGrid[i][j] != CASE_NOTET) {
-				blitOneBlock(this->tGrid[i][j], i, j);
+				blitOneBlock(this->tGrid[i][j], 0, 0, i, j);
 			}
 		}
 	}
-	gameDrawTetro(this->nPieceCur, this->nPieceRot, this->nRow, this->nCol);
-	gameDrawTetro(this->nPieceNxt, 0, TET_NEXT_OFFY, TET_NEXT_OFFX);
+	gameDrawTetro(this->nPieceCur, this->nPieceRot, this->nRow * 32, this->nCol * 32);
+	/* peut mieux faire... */
+	if (this->nPieceNxt == 0)
+		gameDrawTetro(this->nPieceNxt, 0, TET_NEXT_OFFY, TET_NEXT_OFFX);
+	else if (this->nPieceNxt == 3)
+		gameDrawTetro(this->nPieceNxt, 0, TET_NEXT_OFFY + 16, TET_NEXT_OFFX);
+	else
+		gameDrawTetro(this->nPieceNxt, 0, TET_NEXT_OFFY + 16, TET_NEXT_OFFX + 16);
+
 	if (this->nPieceHold >= 0)
 		gameDrawTetro(this->nPieceHold, 0, TET_HOLD_OFFY, TET_HOLD_OFFX);
 }
@@ -381,7 +404,10 @@ Sint32 gameMain(void *pArgs) {
 		}
 		else {
 			/* Game over */
-			if (this->nRow <= 2) {
+			if (this->nRow <= 0) {
+				anchorPiece(this);
+				gameDraw(this);
+				sleep(2);
 				return MENU_MAIN;
 			}
 			else if (this->nDelay == 0) {
@@ -389,6 +415,7 @@ Sint32 gameMain(void *pArgs) {
 				delFullLine(this);
 				this->nPieceCur = this->nPieceNxt;
 				this->nPieceNxt = getNextPiece();
+				this->nPieceRot = 0;
 				this->nRow = 0;
 				this->nCol = (GRID_LG / 2) - (TET_LG / 2);
 			}

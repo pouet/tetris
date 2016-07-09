@@ -13,10 +13,10 @@ enum {
 };
 
 enum {
-	TET_NEXT_OFFX = 15,
-	TET_NEXT_OFFY = 5,
-	TET_HOLD_OFFX = 15,
-	TET_HOLD_OFFY = 10
+	TET_NEXT_OFFX = 350,
+	TET_NEXT_OFFY = 150,
+	TET_HOLD_OFFX = 350,
+	TET_HOLD_OFFY = 320
 };
 
 typedef struct game_s {
