@@ -5,6 +5,7 @@
 #include "frame.h"
 #include "menu.h"
 #include "game.h"
+#include "sfx.h"
 
 struct gVars_s gVars;
 
@@ -75,6 +76,8 @@ int		init(void) {
 		return -1;
 	srand(time(NULL));
 	if (initGVars())
+		return -1;
+	if (sfxInit() < 0)
 		return -1;
 	return 0;
 }
@@ -210,18 +213,6 @@ int mainLoop(void) {
 				nState = MENU_QUIT;
 				break;
 		}
-//		if (eventHandler() || gVars.pKeyb[SDL_SCANCODE_ESCAPE])
-//			break ;
-
-//		SDL_UpdateTexture(gVars.img.tex, NULL, gVars.pixels, gVars.img.pitch);
-//		SDL_RenderCopy(gVars.pRen, gVars.img.tex, NULL, NULL);
-
-//		SDL_RenderClear(gVars.pRen); // Clear the entire screen
-//		game_t g;
-//		drawTetros(&g);
-		//renderRexture(gVars.pTetsImg, 0, 0);
-//		SDL_RenderPresent(gVars.pRen);
-//		frameWait();
 	}
 	return 0;
 }

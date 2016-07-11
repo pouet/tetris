@@ -1,6 +1,8 @@
 #include "SDL.h"
 #include "tetris.h"
 #include "game.h"
+#include "font.h"
+#include "sfx.h"
 
 Sint32 gtTetros[MAX_TET][MAX_ROT][TET_HT][TET_LG] = {
 	{
@@ -215,8 +217,13 @@ Sint32 gameInit(void *pArgs) {
 	this->nCol = (GRID_LG / 2) - (TET_LG / 2);
 
 	this->nLevel = 1;
+	this->nInc = this->nLevel;
 	this->nScore = 0;
 	this->nTime = 0;
+
+//	sfxPlaySound(SFX_PLAY_GAMESTART, SFX_REPEAT_OFF);
+//	sfxPlaySound(SFX_PLAY_GAMESTART, SFX_REPEAT_OFF);
+	sfxPlaySound(SFX_PLAY_THEME, SFX_REPEAT_ON);
 
 	return 0;
 }
@@ -261,6 +268,7 @@ void gameDraw(game_t *this) {
 	int i, j;
 
 	SDL_SetRenderDrawColor(gVars.pRen, 0xFF, 0xFF, 0xFF, 0xFF);
+//	SDL_SetRenderDrawColor(gVars.pRen, 0xFF, 0x00, 0xFF, 0xFF);
 	SDL_RenderClear(gVars.pRen);
 
 	SDL_SetRenderDrawColor(gVars.pRen, 0x7F, 0x7F, 0x7F, 0x7F);
@@ -293,6 +301,17 @@ void gameDraw(game_t *this) {
 
 	if (this->nPieceHold >= 0)
 		gameDrawTetro(this->nPieceHold, 0, TET_HOLD_OFFY, TET_HOLD_OFFX);
+
+
+	{
+		char s[20] = "";
+		sprintf(s, "%5d", this->nLevel);
+		printText(s, 20, 500, 500);
+		sprintf(s, "%5d", this->nScore);
+		printText(s, 20, 500, 550);
+		sprintf(s, "%02d:%02d", (this->nTime / FPS) / 60, (this->nTime / FPS) % 60);
+		printText(s, 20, 500, 600);
+	}
 }
 
 void anchorPiece(game_t *this) {
@@ -356,18 +375,28 @@ void processEvents(game_t *this) {
 			this->nPieceRot = nRot;
 			this->nCol++;
 		}
+		else if (isPosValid(this, this->nPieceCur, nRot, this->nRow - 1, this->nCol)) {
+			this->nPieceRot = nRot;
+			this->nRow--;
+		}
+		/* Test juste pour la barre... */
+		else if (this->nPieceCur == 0 &&
+				isPosValid(this, this->nPieceCur, nRot, this->nRow - 2, this->nCol)) {
+			this->nPieceRot = nRot;
+			this->nRow -= 2;
+		}
 		/* Pas de repetition pour la rotation */
 		gVars.nKeyb[KEY_UP] = KEY_NONE;
 		if (this->nPieceRot == nRot)
 			this->nDelay = DELAY_TO_LOCK;
 	}
-	if (gVars.nKeyb[KEY_DOWN] == KEY_PRESSED) {
+	if (gVars.nKeyb[KEY_SPACE] == KEY_PRESSED) {
 		nRow = this->nRow;
 		while (isPosValid(this, this->nPieceCur, this->nPieceRot, nRow, this->nCol))
 			nRow++;
 		this->nRow = nRow - 1;
 		/* Pas de repetition pour un hard drop */
-		gVars.nKeyb[KEY_DOWN] = KEY_NONE;
+		gVars.nKeyb[KEY_SPACE] = KEY_NONE;
 		this->nDelay = 0;
 	}
 }
@@ -396,8 +425,8 @@ Sint32 gameMain(void *pArgs) {
 
 	processEvents(this);
 
-	this->nInc += 1;
-	if (this->nInc > 10) {
+	this->nInc += this->nLevel;
+	if (this->nInc > INC_TO_NEXT_LINE) {
 		if (isPosValid(this, this->nPieceCur, this->nPieceRot, this->nRow + 1, this->nCol)) {
 			this->nRow++;
 			this->nDelay = DELAY_TO_LOCK;
@@ -412,7 +441,20 @@ Sint32 gameMain(void *pArgs) {
 			}
 			else if (this->nDelay == 0) {
 				anchorPiece(this);
-				delFullLine(this);
+
+				Uint32 nLine = delFullLine(this);
+				Uint32 pnScore[MAX_LINE + 1] = {
+					0, SCORE_1_LINE, SCORE_2_LINE, SCORE_3_LINE, SCORE_4_LINE
+				};
+				this->nScore += pnScore[nLine] * this->nLevel;
+				this->nLine += nLine;
+				if (this->nLevel < MAX_LEVEL && this->nLine > this->nLevel * 5) {
+					this->nLine = 0;
+					this->nLevel++;
+					this->nScore += this->nLevel * (this->nTime / 1000);
+					this->nInc = this->nLevel;
+				}
+
 				this->nPieceCur = this->nPieceNxt;
 				this->nPieceNxt = getNextPiece();
 				this->nPieceRot = 0;
@@ -425,6 +467,19 @@ Sint32 gameMain(void *pArgs) {
 	if (this->nDelay > 0)
 		this->nDelay--;
 
+	this->nTime++;
+//	if (this->nTime == FPS * 2)
+//		sfxPauseAudio();
+//	if (this->nTime == FPS * 4)
+//		sfxResumeAudio();
+//	if (this->nTime == FPS * 2)
+//		sfxStopAllAudio();
+/*	if (this->nTime == FPS * 2) {
+		sfxPlaySound(SFX_PLAY_THEME, SFX_REPEAT_ON);
+		sfxPlaySound(SFX_PLAY_GAMESTART, SFX_REPEAT_OFF);
+	}
+	if (this->nTime == FPS * 7)
+		sfxPlaySound(SFX_PLAY_GAMESTART, SFX_REPEAT_OFF);*/
 	gameDraw(this);
 	return MENU_NULL;
 }

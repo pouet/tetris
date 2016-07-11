@@ -68,3 +68,30 @@ SDL_Texture	*createFont(char *s, int nSize) {
 	SDL_SetRenderTarget(gVars.pRen, NULL);
 	return pTex;
 }
+
+void printText(char *s, int nSize, int x, int y) {
+	SDL_Rect rSrc, rDst;
+	SDL_Rect r;
+	int nLen;
+	int i;
+
+	nLen = strlen(s);
+	SDL_QueryTexture(gVars.pFont, NULL, NULL, NULL, &r.h);
+	r.w = r.h * nLen; 
+
+	rSrc.x = 0;
+	rSrc.y = 0;
+	rSrc.h = r.h;
+	rSrc.w = r.h;
+
+	rDst.x = x;
+	rDst.y = y;
+	rDst.h = nSize;
+	rDst.w = nSize;
+
+	for (i = 0; i < nLen; i++) {
+		rSrc.x = (s[i] - ' ') * r.h;
+		SDL_RenderCopy(gVars.pRen, gVars.pFont, &rSrc, &rDst);
+		rDst.x += nSize;
+	}
+}
