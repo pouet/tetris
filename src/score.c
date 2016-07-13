@@ -40,6 +40,26 @@ Sint32 saveScore(score_t *pScore) {
 	return 0;
 }
 
-Sint32 isHighScore(score_t *pScore) {
-	(void)pScore;
+Sint32 isHighScore(score_t *pScore, Uint32 nScore) {
+	Sint32 i;
+	
+	for (i = 0; i < MAX_SCORE; i++) {
+		if (nScore > pScore->pPlayer[i].nScore)
+			return i;
+	}
+	return -1;
+}
+
+void scoreAdd(score_t *pScore, Sint32 nPos, Uint32 nScore, char *name) {
+	Sint32 i;
+
+	if (nPos < 0 || nPos >= MAX_SCORE)
+		return;
+
+	for (i = MAX_SCORE - 1; i > nPos; i--)
+		pScore->pPlayer[i] = pScore->pPlayer[i - 1];
+
+	strncpy(pScore->pPlayer[nPos].pName, name, NAME_LEN);
+	pScore->pPlayer[nPos].pName[NAME_LEN] = '\0';
+	pScore->pPlayer[nPos].nScore = nScore;
 }

@@ -52,7 +52,7 @@ Sint32 gameInit(void *pArgs) {
 	//sfxPlaySound(SFX_PLAY_TYPEB, SFX_REPEAT_ON);
 	//sfxPlaySound(SFX_PLAY_TYPEC, SFX_REPEAT_ON);
 
-	sfxPauseAudio();
+//	sfxPauseAudio();
 
 	return 0;
 }
@@ -176,6 +176,12 @@ void gameDraw(game_t *this) {
 		printText(s, 20, 500, 600);
 		sprintf(s, "%5d", this->nLine);
 		printText(s, 20, 500, 650);
+
+
+		if (this->nState == GAME_GAMEOVER) {
+			printText("high score !", 20, 500, 50);
+			printText(this->pName, 20, 500, 100);
+		}
 	}
 }
 
@@ -308,8 +314,14 @@ void holdPiece(game_t *this) {
 	this->nPieceRot = 0;
 	this->nDelay = DELAY_TO_LOCK;
 	this->nInc = 0;
-	this->nRow = 0;
+	this->nRow = 2;
 	this->nCol = (GRID_LG / 2) - (TET_LG / 2);
+
+	if (!isPosValid(this, this->nPieceCur, this->nPieceRot, this->nRow, this->nCol)) {
+		this->nRow--;
+		if (!isPosValid(this, this->nPieceCur, this->nPieceRot, this->nRow, this->nCol))
+			this->nRow--;
+	}
 
 	this->nHold = 1;
 }
@@ -495,12 +507,41 @@ Sint32 gameMain(void *pArgs) {
 		case GAME_GAMEOVER:
 			{
 				score_t score;
-				bzero(&score, sizeof score);
-				strcpy(score.pPlayer[0].pName, "pouet");
-				score.pPlayer[0].nScore = this->nScore;
-				saveScore(&score);
+				Sint32 nHigh;
+
+				score = loadScore();
+				nHigh = isHighScore(&score, this->nScore);
+				if (nHigh >= 0) {
+					if (this->pName[this->nPos] == '\0')
+						this->pName[this->nPos] = 'A';
+
+					if (gVars.nKeyb[KEY_UP]) {
+						this->pName[this->nPos]++;
+						if (this->pName[this->nPos] > '~')
+							this->pName[this->nPos] = ' ';
+						gVars.nKeyb[KEY_UP] = KEY_NONE;
+					}
+					if (gVars.nKeyb[KEY_DOWN]) {
+						this->pName[this->nPos]--;
+						if (this->pName[this->nPos] < ' ')
+							this->pName[this->nPos] = '~';
+						gVars.nKeyb[KEY_DOWN] = KEY_NONE;
+					}
+					if (gVars.nKeyb[KEY_SPACE]) {
+						this->nPos++;
+						gVars.nKeyb[KEY_SPACE] = KEY_NONE;
+					}
+
+					if (this->nPos >= NAME_LEN) {
+						scoreAdd(&score, nHigh, this->nScore, this->pName);
+						saveScore(&score);
+						nRet = MENU_MAIN;
+					}
+				}
+				else
+					nRet = MENU_MAIN;
+
 			}
-			nRet = MENU_MAIN;
 			break;
 
 		default:

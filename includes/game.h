@@ -53,7 +53,7 @@ typedef struct game_s {
 	/* for animation */
 	Uint32 nStart;
 	Uint32 nEnd;
-// ?
+// ???
 	Sint32 nSleep;
 
 	Uint32 nHold;
@@ -73,6 +73,9 @@ typedef struct game_s {
 	Uint32 nScore;
 	Uint32 nLine;
 	Uint32 nTime;
+
+	char pName[256];
+	Uint32 nPos;
 } game_t;
 
 extern SDL_Point gTetros[MAX_TET][MAX_ROT][NB_TET_BLOCK];
