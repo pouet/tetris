@@ -57,11 +57,6 @@ typedef Sint32 (*pFct)(void *);
 /* *          Structures           * */
 /* ********************************* */
 
-//typedef struct {
-//	Uint32 nKey;
-//	Sint32 nDelay;
-//} keyb_t;
-
 struct gVars_s {
 	SDL_Window		*pWin;
 	SDL_Renderer	*pRen;

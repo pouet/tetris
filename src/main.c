@@ -75,6 +75,7 @@ int		init(void) {
 	if (initVideo() < 0)
 		return -1;
 	srand(time(NULL));
+	rand();
 	if (initGVars())
 		return -1;
 	if (sfxInit() < 0)

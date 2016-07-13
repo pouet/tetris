@@ -13,8 +13,7 @@ void sfxPlaySound(Uint8 nSndNum, int nRepeat) {
 	int i;
 
 	for (i = 0; i < SFX_SAMPLES; i++) {
-		if (gSfxBuf[i].nSfx == SFX_PLAY_NONE ||
-			(gSfxBuf[i].nPos >= gSfxBuf[i].nLen && gSfxBuf[i].nRepeat == SFX_REPEAT_OFF)) {
+		if (gSfxBuf[i].nSfx == SFX_PLAY_NONE) {
 			SDL_LockAudio();
 			gSfxBuf[i].nPos = 0;
 			gSfxBuf[i].nSfx = nSndNum;
@@ -85,8 +84,17 @@ Sint32 sfxInit(void) {
 	SDL_AudioSpec desired;
 	char *pFiles[SFX_PLAY_MAX] = {
 		"",
-		"sfx/theme.wav",
-		"sfx/gameStart.wav"
+		"sfx/drop.wav",
+		"sfx/gameover.wav",
+		"sfx/levelup.wav",
+		"sfx/line.wav",
+		"sfx/move.wav",
+		"sfx/rotate.wav",
+		"sfx/tetris.wav",
+		"sfx/typea.wav",
+		"sfx/typeb.wav",
+		"sfx/typec.wav",
+		"sfx/typeawesome.wav",
 	};
 	int i;
 
@@ -108,6 +116,7 @@ Sint32 sfxInit(void) {
 
 	/* Let's do it !!! */
 	SDL_PauseAudio(0);
+//	SDL_PauseAudio(1);
 
 	return 0;
 }
