@@ -2,6 +2,7 @@
 #define TETRIS_H
 
 #include "SDL.h"
+#include "score.h"
  
 /* ********************************* */
 /* *          Constantes           * */
@@ -69,7 +70,18 @@ struct gVars_s {
 	SDL_Texture		*pFont;
 	SDL_Texture		*pIntroImg;
 	SDL_Texture		*pTetrisLogo;
+
+	score_t			sScore;
 };
+
+struct gOpts_s {
+	Uint32 nSfxSound;
+	Uint32 nSfxMusic;
+	Uint32 nLevelStart;
+	Uint32 nGhost;
+};
+
+extern struct gOpts_s gOpts;
 
 /* ********************************* */
 /* *           Globales            * */
@@ -83,5 +95,6 @@ extern struct gVars_s gVars;
 
 void renderFlip(void);
 void blitTexture(SDL_Texture *pTex, int x, int y, SDL_Rect *rClip);
+void eventClear(void);
 
 #endif

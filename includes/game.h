@@ -1,6 +1,10 @@
 #ifndef GAME_H
 #define GAME_H
 
+/* ********************************* */
+/* *          Constantes           * */
+/* ********************************* */
+
 enum {
 	GRID_LG = 10,
 	GRID_HT = 22,
@@ -43,6 +47,10 @@ enum {
 	GAME_GAMEOVER
 };
 
+/* ********************************* */
+/* *          Structures           * */
+/* ********************************* */
+
 typedef struct game_s {
 	Sint32 tGrid[GRID_HT][GRID_LG];
 	Sint32 tLine[GRID_HT];
@@ -79,6 +87,10 @@ typedef struct game_s {
 } game_t;
 
 extern SDL_Point gTetros[MAX_TET][MAX_ROT][NB_TET_BLOCK];
+
+/* ********************************* */
+/* *          Prototypes           * */
+/* ********************************* */
 
 Sint32 gameInit(void *pArgs);
 Sint32 gameMain(void *pArgs);

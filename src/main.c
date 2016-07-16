@@ -6,12 +6,17 @@
 #include "menu.h"
 #include "game.h"
 #include "sfx.h"
+#include "score.h"
 
 struct gVars_s gVars;
 
 void	quitVideo(void) {
 	SDL_DestroyRenderer(gVars.pRen);
 	SDL_DestroyWindow(gVars.pWin);
+}
+
+void	quit(void) {
+	saveScore();
 }
 
 int		initVideo(void) {
@@ -36,6 +41,7 @@ int		initVideo(void) {
 
 	SDL_SetRenderDrawBlendMode(gVars.pRen, SDL_BLENDMODE_NONE);
 	SDL_SetRenderDrawColor(gVars.pRen, 0xff, 0xff, 0xff, 0x00);
+	SDL_ShowCursor(SDL_DISABLE);
 
 	return 0;
 }
@@ -68,6 +74,7 @@ int		initGVars(void) {
 	gVars.pFont = loadBMP("gfx/font.bmp");
 	gVars.pIntroImg = loadBMP("gfx/intro.bmp");
 	gVars.pTetrisLogo = loadBMP("gfx/tetris_logo.bmp");
+	gVars.sScore = loadScore();
 	return 0;
 }
 
@@ -80,6 +87,7 @@ int		init(void) {
 		return -1;
 	if (sfxInit() < 0)
 		return -1;
+	atexit(quit);
 	return 0;
 }
 
@@ -154,6 +162,13 @@ int		eventHandler(void) {
 	return 0;
 }
 
+void eventClear(void) {
+	int i;
+
+	for (i = 0; i < KEY_LAST; i++)
+		gVars.nKeyb[i] = KEY_NONE;
+}
+
 menu_e menuLoop(pFct pInit, pFct pMain, pFct pRelease, void *pArgs) {
 	menu_e nMenu;
 
@@ -183,8 +198,8 @@ int mainLoop(void) {
 	menu_e nState;
 	int nLoop;
 
-//	nState = MENU_INTRO;
-	nState = MENU_GAME;
+	nState = MENU_INTRO;
+//	nState = MENU_GAME;
 	nLoop = 1;
 	while (nLoop) {
 		switch (nState) {
@@ -197,9 +212,11 @@ int mainLoop(void) {
 				break;
 
 			case MENU_OPTS:
+				nState = menuLoop(menuOptsInit, menuOptsMain, menuOptsRelease, &menu);
 				break;
 
 			case MENU_HISCORES:
+				nState = menuLoop(menuHighScoreInit, menuHighScoreMain, menuHighScoreRelease, &menu);
 				break;
 
 			case MENU_GAME:
@@ -218,10 +235,11 @@ int mainLoop(void) {
 	return 0;
 }
 
+void menuOptsDefault(void);
 int		main(void) {
 	if (init() < 0)
 		return EXIT_FAILURE;
-
+menuOptsDefault();
 	mainLoop();
 	quitVideo();
 	return 0;

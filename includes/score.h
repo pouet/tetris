@@ -19,8 +19,8 @@ typedef struct score_s {
 } score_t;
 
 score_t loadScore(void);
-Sint32 saveScore(score_t *pScore);
-Sint32 isHighScore(score_t *pScore, Uint32 nScore);
-void scoreAdd(score_t *pScore, Sint32 nPos, Uint32 nScore, char *name);
+Sint32 saveScore(void);
+Sint32 isHighScore(Uint32 nScore);
+void scoreAdd(Sint32 nPos, Uint32 nScore, char *name);
 
 #endif

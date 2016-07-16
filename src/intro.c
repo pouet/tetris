@@ -6,6 +6,8 @@
 Sint32 menuIntroInit(void *pArgs) {
 	intro_t *this = pArgs;
 
+	eventClear();
+
 	bzero(this, sizeof(*this));
 	this->nFade = SDL_ALPHA_TRANSPARENT;
 	this->state = INTRO_FADEIN;
@@ -19,7 +21,7 @@ Sint32 menuIntroInit(void *pArgs) {
 Sint32 menuIntroMain(void *pArgs) {
 	intro_t *this = pArgs;
 
-	if (gVars.pKeyb[SDL_SCANCODE_SPACE])
+	if (gVars.nKeyb[KEY_SPACE])
 		return MENU_MAIN;
 
 	switch (this->state) {

@@ -12,6 +12,11 @@ struct gSfxBuf_s gSfxBuf[SFX_SAMPLES];
 void sfxPlaySound(Uint8 nSndNum, int nRepeat) {
 	int i;
 
+	if (gOpts.nSfxSound == 0 && nSndNum <= SFX_PLAY_TETRIS)
+		return;
+	else if (gOpts.nSfxMusic == 0 && nSndNum >= SFX_PLAY_TYPEA)
+		return;
+
 	for (i = 0; i < SFX_SAMPLES; i++) {
 		if (gSfxBuf[i].nSfx == SFX_PLAY_NONE) {
 			SDL_LockAudio();

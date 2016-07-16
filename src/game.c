@@ -27,6 +27,8 @@ Sint32 gameInit(void *pArgs) {
 	game_t *this = pArgs;
 	int i, j;
 
+	eventClear();
+
 	bzero(this, sizeof *this);
 	for (i = 0; i < GRID_HT; i++)
 		for (j = 0; j < GRID_LG; j++)
@@ -43,12 +45,15 @@ Sint32 gameInit(void *pArgs) {
 	this->nRow = 2;
 	this->nCol = (GRID_LG / 2) - (TET_LG / 2);
 
-	this->nLevel = LEVEL_START;
+	this->nLevel = gOpts.nLevelStart;
+//	this->nLevel = LEVEL_START;
 	this->nInc = this->nLevel;
 	this->nScore = 0;
 	this->nTime = 0;
 
-	sfxPlaySound(SFX_PLAY_TYPEA, SFX_REPEAT_ON);
+	if (gOpts.nSfxMusic)
+		sfxPlaySound(SFX_PLAY_TYPEA + gOpts.nSfxMusic - 1, SFX_REPEAT_ON);
+	//sfxPlaySound(SFX_PLAY_TYPEA, SFX_REPEAT_ON);
 	//sfxPlaySound(SFX_PLAY_TYPEB, SFX_REPEAT_ON);
 	//sfxPlaySound(SFX_PLAY_TYPEC, SFX_REPEAT_ON);
 
@@ -111,7 +116,7 @@ void gameDrawGhost(game_t *this) {
 		nRow++;
 	}
 	nRow--;
-	gameDrawTetro(this->nPieceCur, this->nPieceRot, nRow * 32, this->nCol * 32);
+	gameDrawTetro(this->nPieceCur, this->nPieceRot, (nRow - LINE_HIDDEN) * 32, this->nCol * 32);
 }
 
 void gameDraw(game_t *this) {
@@ -158,7 +163,8 @@ void gameDraw(game_t *this) {
 		if (this->nPieceHold >= 0)
 			gameDrawTetro(this->nPieceHold, 0, TET_HOLD_OFFY, TET_HOLD_OFFX);
 
-//		gameDrawGhost(this);
+		if (gOpts.nGhost)
+			gameDrawGhost(this);
 	}
 
 
@@ -506,12 +512,12 @@ Sint32 gameMain(void *pArgs) {
 
 		case GAME_GAMEOVER:
 			{
-				score_t score;
 				Sint32 nHigh;
 
-				score = loadScore();
-				nHigh = isHighScore(&score, this->nScore);
-				if (nHigh >= 0) {
+				nHigh = isHighScore(this->nScore);
+				if (nHigh < 0)
+					nRet = MENU_MAIN;
+				else {
 					if (this->pName[this->nPos] == '\0')
 						this->pName[this->nPos] = 'A';
 
@@ -533,13 +539,10 @@ Sint32 gameMain(void *pArgs) {
 					}
 
 					if (this->nPos >= NAME_LEN) {
-						scoreAdd(&score, nHigh, this->nScore, this->pName);
-						saveScore(&score);
+						scoreAdd(nHigh, this->nScore, this->pName);
 						nRet = MENU_MAIN;
 					}
 				}
-				else
-					nRet = MENU_MAIN;
 
 			}
 			break;

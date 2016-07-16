@@ -33,6 +33,8 @@ typedef struct menu_s {
 	Uint32 state;
 	Sint32 nSelect;
 	Sint32 nDelay;
+
+	/* anim gauche droite */
 	Sint32 nOffSelect;
 	Sint32 nOffIncr;
 
@@ -52,5 +54,13 @@ Sint32 menuIntroRelease(void *pArgs);
 Sint32 menuMainInit(void *pArgs);
 Sint32 menuMainMain(void *pArgs);
 Sint32 menuMainRelease(void *pArgs);
+
+Sint32 menuHighScoreInit(void *pArgs);
+Sint32 menuHighScoreMain(void *pArgs);
+Sint32 menuHighScoreRelease(void *pArgs);
+
+Sint32 menuOptsInit(void *pArgs);
+Sint32 menuOptsMain(void *pArgs);
+Sint32 menuOptsRelease(void *pArgs);
 
 #endif

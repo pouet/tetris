@@ -1,10 +1,9 @@
 SRC_NAME = $(sort main.c frame.c image.c intro.c menuMain.c font.c game.c sfx.c\
-		   tetros.c score.c)
+		   tetros.c score.c menuHighScore.c menuOpts.c)
 SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 SDL_PATH = ./SDL2.framework/Versions/Current
-#SDL_MIXER_PATH = ./SDL2_mixer.framework/Versions/Current
-INC_PATH = ./includes/ SDL2.framework/Headers #SDL2_mixer.framework/Headers
+INC_PATH = ./includes/ SDL2.framework/Headers
 OBJ_NAME = $(SRC_NAME:.c=.o)
 
 SRC = $(addprefix $(SRC_PATH),$(SRC_NAME))
@@ -14,7 +13,7 @@ INC = $(addprefix -I,$(INC_PATH))
 CC = gcc
 CFLAGS = -Wall -Wextra -O3
 LDFLAGS = $(addprefix -L,$(LIBFT_PATH) $(MLX_PATH) $(SDL_PATH))
-LDLIBS = -F . -framework SDL2 #-framework SDL2_mixer
+LDLIBS = -F . -framework SDL2
 NAME = tetris
 
 .PHONY: all clean fclean re
@@ -27,8 +26,6 @@ $(NAME): $(OBJ)
 #-g -fsanitize=address
 	@install_name_tool -change @rpath/SDL2.framework/Versions/A/SDL2\
 		@executable_path/SDL2.framework/SDL2 $(NAME)
-#	@install_name_tool -change @rpath/SDL2_mixer.framework/Versions/A/SDL2_mixer\
-#		@executable_path/SDL2_mixer.framework/SDL2_mixer $(NAME)
 	@printf "\e[1;32m[OK]\e[0m\n"
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c

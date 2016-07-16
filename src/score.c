@@ -21,7 +21,7 @@ score_t loadScore(void) {
 	return sScore;
 }
 
-Sint32 saveScore(score_t *pScore) {
+Sint32 saveScore(void) {
 	FILE *pFile;
 
 	pFile = fopen(SCORE_FILE, "w");
@@ -29,7 +29,7 @@ Sint32 saveScore(score_t *pScore) {
 		fprintf(stderr, "Failed to save scores...\n");
 		return -1;
 	}
-	if (fwrite(pScore->pPlayer, sizeof pScore->pPlayer[0], MAX_SCORE, pFile) != MAX_SCORE) {
+	if (fwrite(gVars.sScore.pPlayer, sizeof gVars.sScore.pPlayer[0], MAX_SCORE, pFile) != MAX_SCORE) {
 		fprintf(stderr, "Failed to save scores ...\n");
 		fclose(pFile);
 		pFile = fopen(SCORE_FILE, "w");
@@ -40,26 +40,26 @@ Sint32 saveScore(score_t *pScore) {
 	return 0;
 }
 
-Sint32 isHighScore(score_t *pScore, Uint32 nScore) {
+Sint32 isHighScore(Uint32 nScore) {
 	Sint32 i;
 	
 	for (i = 0; i < MAX_SCORE; i++) {
-		if (nScore > pScore->pPlayer[i].nScore)
+		if (nScore > gVars.sScore.pPlayer[i].nScore)
 			return i;
 	}
 	return -1;
 }
 
-void scoreAdd(score_t *pScore, Sint32 nPos, Uint32 nScore, char *name) {
+void scoreAdd(Sint32 nPos, Uint32 nScore, char *name) {
 	Sint32 i;
 
 	if (nPos < 0 || nPos >= MAX_SCORE)
 		return;
 
 	for (i = MAX_SCORE - 1; i > nPos; i--)
-		pScore->pPlayer[i] = pScore->pPlayer[i - 1];
+		gVars.sScore.pPlayer[i] = gVars.sScore.pPlayer[i - 1];
 
-	strncpy(pScore->pPlayer[nPos].pName, name, NAME_LEN);
-	pScore->pPlayer[nPos].pName[NAME_LEN] = '\0';
-	pScore->pPlayer[nPos].nScore = nScore;
+	strncpy(gVars.sScore.pPlayer[nPos].pName, name, NAME_LEN);
+	gVars.sScore.pPlayer[nPos].pName[NAME_LEN] = '\0';
+	gVars.sScore.pPlayer[nPos].nScore = nScore;
 }

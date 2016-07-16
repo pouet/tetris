@@ -18,6 +18,8 @@ Sint32 menuMainInit(void *pArgs) {
 	int nSize = sizeof pTab / sizeof *pTab;
 	int i;
 
+	eventClear();
+
 	SDL_SetRenderDrawColor(gVars.pRen, 0x00, 0x00, 0xFF, 0x00);
 	bzero(this, sizeof(*this));
 
@@ -35,24 +37,31 @@ Sint32 menuMainInit(void *pArgs) {
 
 Sint32 menuMainEvents(void *pArgs) {
 	menu_t *this = pArgs;
+	int i;
 
-	if (this->nDelay <= 0) {
-		if (gVars.pKeyb[SDL_SCANCODE_UP]) {
-			this->nSelect--;
-			this->nDelay = 10;
-		}
-		else if (gVars.pKeyb[SDL_SCANCODE_DOWN]) {
-			this->nSelect++;
-			this->nDelay = 10;
-		}
-		if (this->nSelect < 0)
-			this->nSelect = this->nSizeMenu - 1;
-		else if (this->nSelect >= this->nSizeMenu)
-			this->nSelect = 0;
+	/* Delay de repetition sur les touches */
+	for (i = 0; i < KEY_LAST; i++) {
+		if (gVars.nKeyb[i] > KEY_DELAY)
+			gVars.nKeyb[i]--;
 	}
-	else if (this->nDelay > 0)
-		this->nDelay--;
-	if (gVars.pKeyb[SDL_SCANCODE_RETURN])
+
+	if (gVars.nKeyb[KEY_UP] >= KEY_DELAY && gVars.nKeyb[KEY_DOWN] >= KEY_DELAY)
+		return -1;
+
+	if (gVars.nKeyb[KEY_UP] == KEY_PRESSED || gVars.nKeyb[KEY_UP] == KEY_DELAY) {
+		this->nSelect--;
+		gVars.nKeyb[KEY_UP] = KEY_MAX_DELAY;
+	}
+	if (gVars.nKeyb[KEY_DOWN] == KEY_PRESSED || gVars.nKeyb[KEY_DOWN] == KEY_DELAY) {
+		this->nSelect++;
+		gVars.nKeyb[KEY_DOWN] = KEY_MAX_DELAY;
+	}
+	if (this->nSelect < 0)
+		this->nSelect = this->nSizeMenu - 1;
+	else if (this->nSelect >= this->nSizeMenu)
+		this->nSelect = 0;
+
+	if (gVars.nKeyb[KEY_SPACE])
 		return 0;
 
 	return -1;
@@ -78,30 +87,6 @@ void menuMainDraw(void *pArgs) {
 
 Sint32 menuMainMain(void *pArgs) {
 	menu_t *this = pArgs;
-
-	/*
-	switch (this->state) {
-		case INTRO_FADEIN:
-			this->nFade += FADE_INC;
-			if (this->nFade > SDL_ALPHA_OPAQUE) {
-				this->nFade = SDL_ALPHA_OPAQUE;
-				this->state = INTRO_WAIT;
-			}
-			break;
-		case INTRO_FADEOUT:
-			this->nFade -= FADE_INC;
-			if (this->nFade < SDL_ALPHA_TRANSPARENT)
-				return MENU_QUIT;
-			break;
-		case INTRO_WAIT:
-			this->ticks++;
-			if (this->ticks > WAIT_1S)
-				this->state = INTRO_FADEOUT;
-			break;
-		default:
-			return MENU_QUIT;
-	}
-*/
 
 	if (menuMainEvents(pArgs) >= 0)
 		return this->pnVal[this->nSelect];
