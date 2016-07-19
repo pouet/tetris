@@ -63,4 +63,6 @@ Sint32 menuOptsInit(void *pArgs);
 Sint32 menuOptsMain(void *pArgs);
 Sint32 menuOptsRelease(void *pArgs);
 
+void menuOptsDefault(void);
+
 #endif

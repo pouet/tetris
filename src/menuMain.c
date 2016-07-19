@@ -3,6 +3,7 @@
 #include "frame.h"
 #include "menu.h"
 #include "font.h"
+#include "sfx.h"
 
 Sint32 menuMainInit(void *pArgs) {
 	menu_t *this = pArgs;
@@ -10,27 +11,20 @@ Sint32 menuMainInit(void *pArgs) {
 		char *pName;
 		Uint32 nVal;
 	} pTab[] = {
-		{ "Play", MENU_GAME },
+		{ "Play", MENU_OPTS },
 		{ "High scores", MENU_HISCORES },
-		{ "Options", MENU_OPTS },
-		{ "Quit", MENU_QUIT },
 	};
 	int nSize = sizeof pTab / sizeof *pTab;
 	int i;
 
 	eventClear();
 
-	SDL_SetRenderDrawColor(gVars.pRen, 0x00, 0x00, 0xFF, 0x00);
 	bzero(this, sizeof(*this));
 
 	this->nSizeMenu = nSize;
-//	this->pTex = malloc(nSize * sizeof *this->pTex);
 	this->pnVal = malloc(nSize * sizeof *this->pnVal);
-	for (i = 0; i < nSize; i++) {
-//		this->pTex[i] = createFont(pTab[i].pName, 0);
+	for (i = 0; i < nSize; i++)
 		this->pnVal[i] = pTab[i].nVal;
-	}
-	this->nOffIncr = 2;
 
 	return 0;
 }
@@ -51,10 +45,12 @@ Sint32 menuMainEvents(void *pArgs) {
 	if (gVars.nKeyb[KEY_UP] == KEY_PRESSED || gVars.nKeyb[KEY_UP] == KEY_DELAY) {
 		this->nSelect--;
 		gVars.nKeyb[KEY_UP] = KEY_MAX_DELAY;
+		sfxPlaySound(SFX_PLAY_MOVE, SFX_REPEAT_OFF);
 	}
 	if (gVars.nKeyb[KEY_DOWN] == KEY_PRESSED || gVars.nKeyb[KEY_DOWN] == KEY_DELAY) {
 		this->nSelect++;
 		gVars.nKeyb[KEY_DOWN] = KEY_MAX_DELAY;
+		sfxPlaySound(SFX_PLAY_MOVE, SFX_REPEAT_OFF);
 	}
 	if (this->nSelect < 0)
 		this->nSelect = this->nSizeMenu - 1;
@@ -67,45 +63,47 @@ Sint32 menuMainEvents(void *pArgs) {
 	return -1;
 }
 
+#define MENU_OFFX 380
+#define MENU_OFFY 100
+
 void menuMainDraw(void *pArgs) {
 	menu_t *this = pArgs;
+	char *pName[] = {
+		"Play",
+		"High scores",
+		NULL
+	};
 	int i;
+	Uint32 nColor;
 
-	SDL_RenderCopy(gVars.pRen, gVars.pTetrisLogo, NULL, NULL);
+	blitTexture(gVars.pBackground, 0, 0, NULL);
 
+	printText("->", 20, FONT_COL_BLUE_BLUE, MENU_OFFX, MENU_OFFY + this->nSelect * 30);
 	for (i = 0; i < this->nSizeMenu; i++) {
-		if (i == this->nSelect) {
-			printText("toto", FONT_DEFAULT_SIZE, FONT_COL_WHITE_BLACK,
-					10 + this->nOffSelect, 10 + i * 42);
-//			blitTexture(this->pTex[i], 10 + this->nOffSelect, 10 + i * 42, NULL);
-			this->nOffSelect = this->nOffSelect + this->nOffIncr;
-			if (this->nOffSelect < -64 || this->nOffSelect > 64)
-				this->nOffIncr *= -1;
-		}
+		if (i == this->nSelect)
+			nColor = FONT_COL_WHITE_RED;
 		else
-			printText("tata", FONT_DEFAULT_SIZE, FONT_COL_WHITE_BLACK,
-					10, 10 + i * 42);
-//			blitTexture(this->pTex[i], 10, 10 + i * 42, NULL);
+			nColor = FONT_COL_WHITE_BLUE;
+		printText(pName[i], 20, nColor,
+				MENU_OFFX + 50, MENU_OFFY + i * 30);
 	}
 }
 
 Sint32 menuMainMain(void *pArgs) {
 	menu_t *this = pArgs;
+	Sint32 nRet = MENU_NULL;
 
 	if (menuMainEvents(pArgs) >= 0)
-		return this->pnVal[this->nSelect];
+		nRet = this->pnVal[this->nSelect];
 	menuMainDraw(pArgs);
 
-	return MENU_NULL;
+	return nRet;
 }
 
 Sint32 menuMainRelease(void *pArgs) {
 	menu_t *this = pArgs;
 	int i;
 
-//	for (i = 0; i < this->nSizeMenu; i++)
-//		SDL_DestroyTexture(this->pTex[i]);
-//	free(this->pTex);
 	free(this->pnVal);
 	return 0;
 }

@@ -4,6 +4,7 @@
 #include "menu.h"
 #include "game.h"
 #include "font.h"
+#include "sfx.h"
 
 struct gOpts_s gOpts;
 
@@ -17,14 +18,12 @@ void menuOptsDefault(void) {
 Sint32 menuOptsInit(void *pArgs) {
 	menu_t *this = pArgs;
 
+	menuOptsDefault();
 	eventClear();
 
-	SDL_SetRenderDrawColor(gVars.pRen, 0xAB, 0xCD, 0xEF, 0x00);
 	bzero(this, sizeof(*this));
-	bzero(gVars.nKeyb, sizeof gVars.nKeyb);
 
-	this->nSizeMenu = 5;
-//	menuOptsDefault();
+	this->nSizeMenu = 4;
 
 	return 0;
 }
@@ -34,16 +33,6 @@ Sint32 menuOptsRelease(void *pArgs) {
 
 	(void)this;
 	return 0;
-}
-
-void menuOptsDraw(void *pArgs) {
-	menu_t *this = pArgs;
-	int i;
-
-	SDL_RenderCopy(gVars.pRen, gVars.pTetrisLogo, NULL, NULL);
-
-	for (i = 0; i < this->nSizeMenu; i++) {
-	}
 }
 
 void changeValue(menu_t *this) {
@@ -106,19 +95,23 @@ Sint32 menuOptsEvents(void *pArgs) {
 	if (gVars.nKeyb[KEY_UP] == KEY_PRESSED || gVars.nKeyb[KEY_UP] == KEY_DELAY) {
 		this->nSelect--;
 		gVars.nKeyb[KEY_UP] = KEY_MAX_DELAY;
+		sfxPlaySound(SFX_PLAY_MOVE, SFX_REPEAT_OFF);
 	}
 	if (gVars.nKeyb[KEY_DOWN] == KEY_PRESSED || gVars.nKeyb[KEY_DOWN] == KEY_DELAY) {
 		this->nSelect++;
 		gVars.nKeyb[KEY_DOWN] = KEY_MAX_DELAY;
+		sfxPlaySound(SFX_PLAY_MOVE, SFX_REPEAT_OFF);
 	}
 
 	if (gVars.nKeyb[KEY_LEFT] == KEY_PRESSED || gVars.nKeyb[KEY_LEFT] == KEY_DELAY) {
 		changeValue(this);
 		gVars.nKeyb[KEY_LEFT] = KEY_MAX_DELAY;
+		sfxPlaySound(SFX_PLAY_MOVE, SFX_REPEAT_OFF);
 	}
 	if (gVars.nKeyb[KEY_RIGHT] == KEY_PRESSED || gVars.nKeyb[KEY_RIGHT] == KEY_DELAY) {
 		changeValue(this);
 		gVars.nKeyb[KEY_RIGHT] = KEY_MAX_DELAY;
+		sfxPlaySound(SFX_PLAY_MOVE, SFX_REPEAT_OFF);
 	}
 
 	if (this->nSelect < 0)
@@ -126,23 +119,26 @@ Sint32 menuOptsEvents(void *pArgs) {
 	else if (this->nSelect >= this->nSizeMenu)
 		this->nSelect = 0;
 
-	if (gVars.nKeyb[KEY_SPACE] && this->nSelect == this->nSizeMenu - 1)
+	if (gVars.nKeyb[KEY_SPACE])
 		return 0;
 
 	return -1;
 }
 
+#define MENU_OFFX 360
+#define MENU_OFFY 100
+
 Sint32 menuOptsMain(void *pArgs) {
 	menu_t *this = pArgs;
 	char s[128] = "";
 	Sint32 i;
+	Sint32 nRet = MENU_NULL;
 
 	char *pNameOpts[] = {
-		"Sound FX",
+		"Sound",
 		"Music",
-		"Level start",
-		"Ghost piece",
-		"Quit"
+		"Level",
+		"Ghost"
 	};
 	char *pValOptsMusic[64] = {
 		"off",
@@ -158,12 +154,15 @@ Sint32 menuOptsMain(void *pArgs) {
 
 	(void)this;
 
-	SDL_RenderFillRect(gVars.pRen, NULL);
+	if (menuOptsEvents(pArgs) >= 0)
+		nRet = MENU_GAME;
 
-	printText("->", 30, FONT_COL_BLUE_BLUE, 40, 100 + 50 * this->nSelect);
+	blitTexture(gVars.pBackground, 0, 0, NULL);
+
+	printText("->", 20, FONT_COL_BLUE_BLUE, MENU_OFFX, MENU_OFFY + 50 * this->nSelect);
 	for (i = 0; i < this->nSizeMenu; i++) {
 		sprintf(s, "%-15s", pNameOpts[i]);
-		printText(s, 30, FONT_COL_WHITE_RED, 100, 100 + 50 * i);
+		printText(s, 20, FONT_COL_WHITE_RED, MENU_OFFX + 50, MENU_OFFY + 50 * i);
 		switch (i) {
 			case 0:
 				strcpy(s, gOpts.nSfxSound ? "on" : "off");
@@ -181,11 +180,10 @@ Sint32 menuOptsMain(void *pArgs) {
 				s[0] = '\0';
 				break;
 		}
-		printText(s, 30, FONT_COL_WHITE_BLUE, 650, 100 + 50 * i);
+		printText(s, 20, FONT_COL_WHITE_BLUE, MENU_OFFX + 180, MENU_OFFY + 50 * i);
 	}
+	printText("Press SPACE", 20, FONT_COL_WHITE_RED, MENU_OFFX + 45, 600);
+	printText("to start", 20, FONT_COL_WHITE_RED, MENU_OFFX + 80, 630);
 
-	if (menuOptsEvents(pArgs) >= 0)
-		return MENU_MAIN;
-
-	return MENU_NULL;
+	return nRet;
 }

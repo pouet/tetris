@@ -88,6 +88,7 @@ int		init(void) {
 		return -1;
 	if (sfxInit() < 0)
 		return -1;
+	menuOptsDefault();
 	atexit(quit);
 	return 0;
 }
@@ -236,11 +237,10 @@ int mainLoop(void) {
 	return 0;
 }
 
-void menuOptsDefault(void);
 int		main(void) {
 	if (init() < 0)
 		return EXIT_FAILURE;
-menuOptsDefault();
+
 	mainLoop();
 	quitVideo();
 	return 0;

@@ -62,8 +62,6 @@ typedef struct game_s {
 	/* for animation */
 	Uint32 nStart;
 	Uint32 nEnd;
-// ???
-	Sint32 nSleep;
 
 	Uint32 nHold;
 

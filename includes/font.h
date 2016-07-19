@@ -24,7 +24,6 @@ enum {
 /* *          Prototypes           * */
 /* ********************************* */
 
-//SDL_Texture	*createFont(char *s, int nSize);
 void printText(char *s, int nSize, int nFont, int x, int y);
 
 #endif

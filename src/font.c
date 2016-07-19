@@ -4,7 +4,7 @@
 #include "font.h"
 
 void printText(char *s, int nSize, int nFont, int x, int y) {
-	static char *pLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.:!'-* ";
+	static char *pLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.:!'-*>< ";
 	SDL_Rect rSrc, rDst;
 	SDL_Rect r;
 	int nLen;
