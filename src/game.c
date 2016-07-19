@@ -4,6 +4,30 @@
 #include "font.h"
 #include "sfx.h"
 
+Uint32 gFrameToDrop[MAX_LEVEL + 1] = {
+	0,
+	48,
+	43,
+	38,
+	33,
+	28,
+	23,
+	20,
+	18,
+	15,
+	13,
+	11,
+	9,
+	8,
+	7,
+	6,
+	5,
+	4,
+	3,
+	2,
+	1
+};
+
 Sint32 getNextPiece(void) {
 	static Sint32 tPieces[MAX_TET];
 	static Uint32 nPcs = MAX_TET;
@@ -57,7 +81,7 @@ Sint32 gameInit(void *pArgs) {
 	//sfxPlaySound(SFX_PLAY_TYPEB, SFX_REPEAT_ON);
 	//sfxPlaySound(SFX_PLAY_TYPEC, SFX_REPEAT_ON);
 
-//	sfxPauseAudio();
+	sfxPauseAudio();
 
 	return 0;
 }
@@ -111,12 +135,19 @@ void gameDrawTetro(Sint32 nTet, Sint32 nRot, int row, int col) {
 
 void gameDrawGhost(game_t *this) {
 	Sint32 nRow = this->nRow + 1;
+	int i;
+	int iRow, iCol;
 
-	while (isPosValid(this, this->nPieceCur, this->nPieceRot, nRow, this->nCol)) {
+	while (isPosValid(this, this->nPieceCur, this->nPieceRot, nRow, this->nCol))
 		nRow++;
-	}
 	nRow--;
-	gameDrawTetro(this->nPieceCur, this->nPieceRot, (nRow - LINE_HIDDEN) * 32, this->nCol * 32);
+	
+	for (i = 0; i < NB_TET_BLOCK; i++) {
+		iRow = gTetros[this->nPieceCur][this->nPieceRot][i].y;
+		iCol = gTetros[this->nPieceCur][this->nPieceRot][i].x;
+		blitOneBlock(MAX_TET, PLAYGRID_OFFY + (nRow - LINE_HIDDEN) * 32,
+				PLAYGRID_OFFX + this->nCol * 32, iRow, iCol);
+	}
 }
 
 void gameDraw(game_t *this) {
@@ -124,7 +155,7 @@ void gameDraw(game_t *this) {
 	int i, j;
 
 //	SDL_SetRenderDrawColor(gVars.pRen, 0xFF, 0xFF, 0xFF, 0xFF);
-	SDL_SetRenderDrawColor(gVars.pRen, 0xFF, 0xAB, 0xFF, 0xFF);
+/*	SDL_SetRenderDrawColor(gVars.pRen, 0xFF, 0xAB, 0xFF, 0xFF);
 	SDL_RenderClear(gVars.pRen);
 
 	SDL_SetRenderDrawColor(gVars.pRen, 0x7F, 0x7F, 0x7F, 0x7F);
@@ -138,33 +169,39 @@ void gameDraw(game_t *this) {
 	r.w = TET_LG * 32 + 32;
 	r.h = TET_HT * 32;
 	SDL_RenderFillRect(gVars.pRen, &r);
+	*/
 
+	blitTexture(gVars.pBackground, 0, 0, NULL);
 
 	if (this->nState != GAME_PAUSE) {
+		if (gOpts.nGhost && this->nState == GAME_NORMAL)
+			gameDrawGhost(this);
 		for (i = LINE_HIDDEN; i < GRID_HT; i++) {
 			for (j = 0; j < GRID_LG; j++) {
 				if (this->tGrid[i][j] != CASE_NOTET) {
-					blitOneBlock(this->tGrid[i][j], 0, 0, i - LINE_HIDDEN, j);
+					blitOneBlock(this->tGrid[i][j], PLAYGRID_OFFY, PLAYGRID_OFFX, i - LINE_HIDDEN, j);
 				}
 			}
 		}
 	}
 
+//	if (0)
 	if (this->nState == GAME_NORMAL) {
+//	if (1) {
 		/* TODO: peut mieux faire... */
-		gameDrawTetro(this->nPieceCur, this->nPieceRot, (this->nRow - LINE_HIDDEN) * 32, this->nCol * 32);
-		if (this->nPieceNxt == 0)
-			gameDrawTetro(this->nPieceNxt, 0, TET_NEXT_OFFY, TET_NEXT_OFFX);
-		else if (this->nPieceNxt == 3)
-			gameDrawTetro(this->nPieceNxt, 0, TET_NEXT_OFFY + 16, TET_NEXT_OFFX);
-		else
-			gameDrawTetro(this->nPieceNxt, 0, TET_NEXT_OFFY + 16, TET_NEXT_OFFX + 16);
+		gameDrawTetro(this->nPieceCur, this->nPieceRot,
+				PLAYGRID_OFFY + (this->nRow - LINE_HIDDEN) * 32,
+				PLAYGRID_OFFX + this->nCol * 32);
+//		if (this->nPieceNxt == 0)
+//			gameDrawTetro(this->nPieceNxt, 0, TET_NEXT_OFFY, TET_NEXT_OFFX);
+//		else if (this->nPieceNxt == 3)
+//			gameDrawTetro(this->nPieceNxt, 0, TET_NEXT_OFFY + 16, TET_NEXT_OFFX);
+//		else
+//			gameDrawTetro(this->nPieceNxt, 0, TET_NEXT_OFFY + 16, TET_NEXT_OFFX + 16);
 
+		gameDrawTetro(this->nPieceNxt, 0, TET_NEXT_OFFY, TET_NEXT_OFFX);
 		if (this->nPieceHold >= 0)
 			gameDrawTetro(this->nPieceHold, 0, TET_HOLD_OFFY, TET_HOLD_OFFX);
-
-		if (gOpts.nGhost)
-			gameDrawGhost(this);
 	}
 
 
@@ -172,21 +209,30 @@ void gameDraw(game_t *this) {
 		char s[20] = "";
 
 		if (this->nState == GAME_PAUSE)
-			printText("* paused *", 32, 0, (32 * GRID_HT) / 2);
+			printText("* paused *", 32, FONT_COL_GREEN_GREEN, PLAYGRID_OFFX, (32 * GRID_HT) / 2);
 
+
+		printText("Level", 20, FONT_COL_WHITE_BLUE, 150, 500);
 		sprintf(s, "%5d", this->nLevel);
-		printText(s, 20, 500, 500);
+		printText(s, 20, FONT_COL_WHITE_RED, 150, 530);
+
+		printText("Score", 20, FONT_COL_WHITE_BLUE, 150, 570);
 		sprintf(s, "%5d", this->nScore);
-		printText(s, 20, 500, 550);
-		sprintf(s, "%02d:%02d", (this->nTime / FPS) / 60, (this->nTime / FPS) % 60);
-		printText(s, 20, 500, 600);
+		printText(s, 20, FONT_COL_WHITE_RED, 150, 600);
+
+		printText("Line", 20, FONT_COL_WHITE_BLUE, 150, 640);
 		sprintf(s, "%5d", this->nLine);
-		printText(s, 20, 500, 650);
+		printText(s, 20, FONT_COL_WHITE_RED, 150, 670);
+
+		printText("Time", 20, FONT_COL_WHITE_BLUE, 800, 530);
+		sprintf(s, "%02d:%02d", (this->nTime / FPS) / 60, (this->nTime / FPS) % 60);
+		printText(s, 20, FONT_COL_WHITE_GREY, 800, 560);
+
 
 
 		if (this->nState == GAME_GAMEOVER) {
-			printText("high score !", 20, 500, 50);
-			printText(this->pName, 20, 500, 100);
+			printText("high score !", 20, FONT_COL_CYAN_BLUE, 500, 50);
+			printText(this->pName, 20, FONT_COL_BLUE_BLUE, 500, 100);
 		}
 	}
 }
@@ -265,7 +311,8 @@ void hardDrop(game_t *this) {
 	/* Pas de repetition pour un hard drop */
 	gVars.nKeyb[KEY_SPACE] = KEY_NONE;
 	this->nDelay = 0;
-	this->nInc = INC_TO_NEXT_LINE + 1;
+	this->nInc = 0;
+//	this->nInc = INC_TO_NEXT_LINE + 1;
 	sfxPlaySound(SFX_PLAY_DROP, SFX_REPEAT_OFF);
 }
 
@@ -319,7 +366,8 @@ void holdPiece(game_t *this) {
 
 	this->nPieceRot = 0;
 	this->nDelay = DELAY_TO_LOCK;
-	this->nInc = 0;
+	this->nInc = gFrameToDrop[this->nLevel];
+//	this->nInc = 0;
 	this->nRow = 2;
 	this->nCol = (GRID_LG / 2) - (TET_LG / 2);
 
@@ -407,7 +455,8 @@ void gamePieceLock(game_t *this) {
 	this->nPieceNxt = getNextPiece();
 	this->nPieceRot = 0;
 	this->nDelay = DELAY_TO_LOCK;
-	this->nInc = 0;
+	this->nInc = gFrameToDrop[this->nLevel];
+//	this->nInc = 0;
 	this->nRow = 2;
 	this->nCol = (GRID_LG / 2) - (TET_LG / 2);
 	this->nHold = 0;
@@ -421,7 +470,8 @@ void gamePieceLock(game_t *this) {
 }
 
 Sint32 gamePieceDown(game_t *this) {
-	this->nInc = 0;
+	this->nInc = gFrameToDrop[this->nLevel];
+	//this->nInc = 0;
 
 	if (isPosValid(this, this->nPieceCur, this->nPieceRot, this->nRow + 1, this->nCol)) {
 		this->nRow++;
@@ -444,8 +494,9 @@ Sint32 gamePieceDown(game_t *this) {
 Sint32 gameNormal(game_t *this) {
 	Sint32 nRet = MENU_NULL;
 
-	this->nInc += this->nLevel;
-	if (this->nInc > INC_TO_NEXT_LINE) {
+//	this->nInc += this->nLevel;
+	this->nInc--;
+	if (this->nInc <= 0) {// > INC_TO_NEXT_LINE) {
 		nRet = gamePieceDown(this);
 	}
 	if (this->nDelay > 0)

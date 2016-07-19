@@ -24,10 +24,10 @@ Sint32 menuMainInit(void *pArgs) {
 	bzero(this, sizeof(*this));
 
 	this->nSizeMenu = nSize;
-	this->pTex = malloc(nSize * sizeof *this->pTex);
+//	this->pTex = malloc(nSize * sizeof *this->pTex);
 	this->pnVal = malloc(nSize * sizeof *this->pnVal);
 	for (i = 0; i < nSize; i++) {
-		this->pTex[i] = createFont(pTab[i].pName, 0);
+//		this->pTex[i] = createFont(pTab[i].pName, 0);
 		this->pnVal[i] = pTab[i].nVal;
 	}
 	this->nOffIncr = 2;
@@ -75,13 +75,17 @@ void menuMainDraw(void *pArgs) {
 
 	for (i = 0; i < this->nSizeMenu; i++) {
 		if (i == this->nSelect) {
-			blitTexture(this->pTex[i], 10 + this->nOffSelect, 10 + i * 42, NULL);
+			printText("toto", FONT_DEFAULT_SIZE, FONT_COL_WHITE_BLACK,
+					10 + this->nOffSelect, 10 + i * 42);
+//			blitTexture(this->pTex[i], 10 + this->nOffSelect, 10 + i * 42, NULL);
 			this->nOffSelect = this->nOffSelect + this->nOffIncr;
 			if (this->nOffSelect < -64 || this->nOffSelect > 64)
 				this->nOffIncr *= -1;
 		}
 		else
-			blitTexture(this->pTex[i], 10, 10 + i * 42, NULL);
+			printText("tata", FONT_DEFAULT_SIZE, FONT_COL_WHITE_BLACK,
+					10, 10 + i * 42);
+//			blitTexture(this->pTex[i], 10, 10 + i * 42, NULL);
 	}
 }
 
@@ -99,9 +103,9 @@ Sint32 menuMainRelease(void *pArgs) {
 	menu_t *this = pArgs;
 	int i;
 
-	for (i = 0; i < this->nSizeMenu; i++)
-		SDL_DestroyTexture(this->pTex[i]);
-	free(this->pTex);
+//	for (i = 0; i < this->nSizeMenu; i++)
+//		SDL_DestroyTexture(this->pTex[i]);
+//	free(this->pTex);
 	free(this->pnVal);
 	return 0;
 }

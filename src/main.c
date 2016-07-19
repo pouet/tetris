@@ -74,6 +74,7 @@ int		initGVars(void) {
 	gVars.pFont = loadBMP("gfx/font.bmp");
 	gVars.pIntroImg = loadBMP("gfx/intro.bmp");
 	gVars.pTetrisLogo = loadBMP("gfx/tetris_logo.bmp");
+	gVars.pBackground = loadBMP("gfx/background.bmp");
 	gVars.sScore = loadScore();
 	return 0;
 }

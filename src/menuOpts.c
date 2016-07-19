@@ -160,10 +160,10 @@ Sint32 menuOptsMain(void *pArgs) {
 
 	SDL_RenderFillRect(gVars.pRen, NULL);
 
-	printText("->", 30, 40, 100 + 50 * this->nSelect);
+	printText("->", 30, FONT_COL_BLUE_BLUE, 40, 100 + 50 * this->nSelect);
 	for (i = 0; i < this->nSizeMenu; i++) {
 		sprintf(s, "%-15s", pNameOpts[i]);
-		printText(s, 30, 100, 100 + 50 * i);
+		printText(s, 30, FONT_COL_WHITE_RED, 100, 100 + 50 * i);
 		switch (i) {
 			case 0:
 				strcpy(s, gOpts.nSfxSound ? "on" : "off");
@@ -181,7 +181,7 @@ Sint32 menuOptsMain(void *pArgs) {
 				s[0] = '\0';
 				break;
 		}
-		printText(s, 30, 650, 100 + 50 * i);
+		printText(s, 30, FONT_COL_WHITE_BLUE, 650, 100 + 50 * i);
 	}
 
 	if (menuOptsEvents(pArgs) >= 0)

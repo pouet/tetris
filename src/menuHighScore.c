@@ -51,7 +51,7 @@ Sint32 menuHighScoreMain(void *pArgs) {
 		else
 			sprintf(s, "%-15s   :   %u",
 				gVars.sScore.pPlayer[i].pName, gVars.sScore.pPlayer[i].nScore);
-		printText(s, 30, 100, 100 + 50 * i);
+		printText(s, 30, FONT_COL_BLUE_BLUE, 100, 100 + 50 * i);
 	}
 
 	if (menuHighScoreEvents(pArgs) >= 0)

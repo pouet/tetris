@@ -70,6 +70,7 @@ struct gVars_s {
 	SDL_Texture		*pFont;
 	SDL_Texture		*pIntroImg;
 	SDL_Texture		*pTetrisLogo;
+	SDL_Texture		*pBackground;
 
 	score_t			sScore;
 };
