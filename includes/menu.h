@@ -73,6 +73,10 @@ Sint32 menuHelpInit(void *pArgs);
 Sint32 menuHelpMain(void *pArgs);
 Sint32 menuHelpRelease(void *pArgs);
 
+Sint32 menuCreditsInit(void *pArgs);
+Sint32 menuCreditsMain(void *pArgs);
+Sint32 menuCreditsRelease(void *pArgs);
+
 void menuOptsDefault(void);
 
 #endif

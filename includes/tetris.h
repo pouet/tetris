@@ -33,6 +33,7 @@ typedef enum {
 	MENU_GAMEOVER,
 	MENU_GAME,
 	MENU_HELP,
+	MENU_CREDITS,
 	MENU_QUIT,
 	MENU_MAX
 } menu_e;

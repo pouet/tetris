@@ -14,6 +14,7 @@ Sint32 menuMainInit(void *pArgs) {
 		{ "Play", MENU_OPTS },
 		{ "High scores", MENU_HISCORES },
 		{ "High scores", MENU_HELP },
+		{ "High scores", MENU_CREDITS },
 	};
 	int nSize = sizeof pTab / sizeof *pTab;
 	int i;
@@ -70,6 +71,7 @@ void menuMainDraw(void *pArgs) {
 		"Play",
 		"High scores",
 		"Help",
+		"Credits",
 		NULL
 	};
 	int i;

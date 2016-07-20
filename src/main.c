@@ -200,6 +200,7 @@ int mainLoop(void) {
 		{ gameOverInit, gameOverMain, gameOverRelease, &game },
 		{ gameInit, gameMain, gameRelease, &game },
 		{ menuHelpInit, menuHelpMain, menuHelpRelease, NULL },
+		{ menuCreditsInit, menuCreditsMain, menuCreditsRelease, NULL },
 		{ NULL, NULL, NULL, NULL },
 	};
 	menu_e nState;
