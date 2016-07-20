@@ -32,7 +32,9 @@ typedef enum {
 	MENU_HISCORES,
 	MENU_GAMEOVER,
 	MENU_GAME,
-	MENU_QUIT
+	MENU_HELP,
+	MENU_QUIT,
+	MENU_MAX
 } menu_e;
 
 enum {

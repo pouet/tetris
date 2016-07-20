@@ -93,7 +93,6 @@ int		init(void) {
 	return 0;
 }
 
-
 void renderFlip(void) {
 	SDL_RenderPresent(gVars.pRen);
 	SDL_RenderClear(gVars.pRen);
@@ -108,16 +107,6 @@ void blitTexture(SDL_Texture *pTex, int x, int y, SDL_Rect *rClip) {
 	SDL_QueryTexture(pTex, NULL, NULL, &r.w, &r.h);
 	SDL_RenderCopy(gVars.pRen, pTex, rClip, &r);
 }
-
-
-
-
-
-
-
-
-
-
 
 /* SDLK_LAST no more exists... leave me alone... */
 int		eventHandler(void) {
@@ -197,46 +186,29 @@ int mainLoop(void) {
 	intro_t intro;
 	menu_t menu;
 	game_t game;
+	struct {
+		pFct init;
+		pFct main;
+		pFct release;
+		void *args;
+	} pTab[MENU_MAX] = {
+		{ NULL, NULL, NULL, NULL },
+		{ menuIntroInit, menuIntroMain, menuIntroRelease, &intro },
+		{ menuMainInit, menuMainMain, menuMainRelease, &menu },
+		{ menuOptsInit, menuOptsMain, menuOptsRelease, &menu },
+		{ menuHighScoreInit, menuHighScoreMain, menuHighScoreRelease, &menu },
+		{ gameOverInit, gameOverMain, gameOverRelease, &game },
+		{ gameInit, gameMain, gameRelease, &game },
+		{ menuHelpInit, menuHelpMain, menuHelpRelease, NULL },
+		{ NULL, NULL, NULL, NULL },
+	};
 	menu_e nState;
-	int nLoop;
 
 	nState = MENU_INTRO;
-//	nState = MENU_GAME;
-	nLoop = 1;
-	while (nLoop) {
-		switch (nState) {
-			case MENU_INTRO:
-				nState = menuLoop(menuIntroInit, menuIntroMain, menuIntroRelease, &intro);
-				break;
-
-			case MENU_MAIN:
-				nState = menuLoop(menuMainInit, menuMainMain, menuMainRelease, &menu);
-				break;
-
-			case MENU_OPTS:
-				nState = menuLoop(menuOptsInit, menuOptsMain, menuOptsRelease, &menu);
-				break;
-
-			case MENU_HISCORES:
-				nState = menuLoop(menuHighScoreInit, menuHighScoreMain, menuHighScoreRelease, &menu);
-				break;
-
-			case MENU_GAME:
-				nState = menuLoop(gameInit, gameMain, gameRelease, &game);
-				break;
-
-			case MENU_GAMEOVER:
-				nState = menuLoop(gameOverInit, gameOverMain, gameOverRelease, &game);
-				break;
-
-			case MENU_QUIT:
-				nLoop = 0;
-				break;
-
-			default:
-				nState = MENU_QUIT;
-				break;
-		}
+	while (1) {
+		if (nState == MENU_QUIT)
+			break;
+		nState = menuLoop(pTab[nState].init, pTab[nState].main, pTab[nState].release, pTab[nState].args);
 	}
 	return 0;
 }

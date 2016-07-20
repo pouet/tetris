@@ -22,6 +22,7 @@ Sint32 menuOptsInit(void *pArgs) {
 	eventClear();
 
 	bzero(this, sizeof(*this));
+	sfxPlaySound(SFX_PLAY_TYPEA + gOpts.nSfxMusic - 1, SFX_REPEAT_ON);
 
 	this->nSizeMenu = 4;
 
@@ -53,7 +54,7 @@ void changeValue(menu_t *this) {
 		case 1:
 			pVal = (Sint32*) &gOpts.nSfxMusic;
 			min = 0;
-			max = 3;
+			max = 4;
 			break;
 		case 2:
 			pVal = (Sint32*) &gOpts.nLevelStart;
@@ -74,6 +75,11 @@ void changeValue(menu_t *this) {
 		*pVal = max;
 	else if (*pVal > max)
 		*pVal = min;
+	if ((Uint32 *)pVal == &gOpts.nSfxMusic) {
+		sfxStopAllAudio();
+		if (gOpts.nSfxMusic)
+			sfxPlaySound(SFX_PLAY_TYPEA + gOpts.nSfxMusic - 1, SFX_REPEAT_ON);
+	}
 }
 
 Sint32 menuOptsEvents(void *pArgs) {
@@ -144,11 +150,12 @@ Sint32 menuOptsMain(void *pArgs) {
 		"off",
 		"typea",
 		"typeb",
-		"typec"
+		"typec",
+		"mario"
 	};
 
 	// on / off
-	// off - typea - typeb - typec
+	// off - typea - typeb - typec - mario
 	// 1 - MAX_LEVEL
 	// on / off
 
@@ -162,7 +169,13 @@ Sint32 menuOptsMain(void *pArgs) {
 
 	blitTexture(gVars.pBackground, 0, 0, NULL);
 
-	printText(">", MENU_FONT_SIZE, FONT_COL_BLUE_BLUE, MENU_OFFX, MENU_OFFY + 50 * this->nSelect);
+	printText(">", MENU_FONT_SIZE, FONT_COL_BLUE_BLUE,
+			MENU_OFFX, MENU_OFFY + 50 * this->nSelect);
+	printText("<", MENU_FONT_SIZE, FONT_COL_GREEN_GREEN,
+			MENU_OFFX + 150, MENU_OFFY + 50 * this->nSelect);
+	printText(">", MENU_FONT_SIZE, FONT_COL_GREEN_GREEN,
+			MENU_OFFX + 280, MENU_OFFY + 50 * this->nSelect);
+
 	for (i = 0; i < this->nSizeMenu; i++) {
 		sprintf(s, "%-15s", pNameOpts[i]);
 		printText(s, MENU_FONT_SIZE, FONT_COL_WHITE_RED, MENU_OFFX + 30, MENU_OFFY + 50 * i);
@@ -183,10 +196,13 @@ Sint32 menuOptsMain(void *pArgs) {
 				s[0] = '\0';
 				break;
 		}
-		printText(s, MENU_FONT_SIZE, FONT_COL_WHITE_BLUE, MENU_OFFX + 150, MENU_OFFY + 50 * i);
+		printText(s, MENU_FONT_SIZE, FONT_COL_WHITE_BLUE,
+				MENU_OFFX + 148 + 25, MENU_OFFY + 50 * i);
 	}
 	printText("Press SPACE", MENU_FONT_SIZE, FONT_COL_WHITE_RED, MENU_OFFX + 25, 600);
 	printText("to start", MENU_FONT_SIZE, FONT_COL_WHITE_RED, MENU_OFFX + 60, 630);
 
+	if (nRet != MENU_NULL && nRet != MENU_GAME)
+		sfxStopAllAudio();
 	return nRet;
 }

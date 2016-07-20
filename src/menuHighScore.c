@@ -47,21 +47,17 @@ Sint32 menuHighScoreMain(void *pArgs) {
 
 	for (i = 0; i < NB_SCORE; i++) {
 		if (gVars.sScore.pPlayer[i].nScore == 0)
-			sprintf(s, "%-6.6s %s", "----", "----");
-		else
-			sprintf(s, "%-6.6s %u",
+			break;
+
+		sprintf(s, "%-6.6s %u",
 				gVars.sScore.pPlayer[i].pName, gVars.sScore.pPlayer[i].nScore);
 
-		if (gVars.sScore.pPlayer[i].nScore == 0)
-			strcpy(s, "----");
-		else
-			strncpy(s, gVars.sScore.pPlayer[i].pName, NAME_LEN);
+		strncpy(s, gVars.sScore.pPlayer[i].pName, NAME_LEN);
 		s[NAME_LEN] = '\0';
-		printText(s, MENU_FONT_SIZE, FONT_COL_BLUE_BLUE, MENU_OFFX, MENU_OFFY + 30 * i);
+		printText(s, MENU_FONT_SIZE, FONT_COL_WHITE_RED, MENU_OFFX + 10, MENU_OFFY + 30 * i);
 
-		if (gVars.sScore.pPlayer[i].nScore > 0)
-			sprintf(s, "%.6u", gVars.sScore.pPlayer[i].nScore);
-		printText(s, MENU_FONT_SIZE, FONT_COL_CYAN_BLUE, MENU_OFFX + 150, MENU_OFFY + 30 * i);
+		sprintf(s, "%.6u", gVars.sScore.pPlayer[i].nScore);
+		printText(s, MENU_FONT_SIZE, FONT_COL_WHITE_BLUE, MENU_OFFX + 160, MENU_OFFY + 30 * i);
 	}
 
 	if (menuHighScoreEvents(pArgs) >= 0)

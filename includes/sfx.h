@@ -20,7 +20,7 @@ enum {
 	SFX_PLAY_TYPEA,
 	SFX_PLAY_TYPEB,
 	SFX_PLAY_TYPEC,
-	SFX_PLAY_TYPEAWESOME,
+	SFX_PLAY_MARIO,
 	SFX_PLAY_MAX
 };
 
@@ -45,5 +45,7 @@ void sfxPlaySound(Uint8 nSndNum, int nRepeat);
 void sfxStopAllAudio(void);
 void sfxPauseAudio(void);
 void sfxPlayAudio(void);
+void sfxStopSounds(void);
+void sfxStopMusic(void);
 
 #endif

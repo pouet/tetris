@@ -74,14 +74,6 @@ Sint32 gameInit(void *pArgs) {
 	this->nScore = 0;
 	this->nTime = 0;
 
-	if (gOpts.nSfxMusic)
-		sfxPlaySound(SFX_PLAY_TYPEA + gOpts.nSfxMusic - 1, SFX_REPEAT_ON);
-	//sfxPlaySound(SFX_PLAY_TYPEA, SFX_REPEAT_ON);
-	//sfxPlaySound(SFX_PLAY_TYPEB, SFX_REPEAT_ON);
-	//sfxPlaySound(SFX_PLAY_TYPEC, SFX_REPEAT_ON);
-
-//	sfxPauseAudio();
-
 	return 0;
 }
 

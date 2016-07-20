@@ -13,6 +13,7 @@ Sint32 menuMainInit(void *pArgs) {
 	} pTab[] = {
 		{ "Play", MENU_OPTS },
 		{ "High scores", MENU_HISCORES },
+		{ "High scores", MENU_HELP },
 	};
 	int nSize = sizeof pTab / sizeof *pTab;
 	int i;
@@ -68,6 +69,7 @@ void menuMainDraw(void *pArgs) {
 	char *pName[] = {
 		"Play",
 		"High scores",
+		"Help",
 		NULL
 	};
 	int i;

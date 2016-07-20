@@ -1,5 +1,5 @@
 SRC_NAME = $(sort main.c frame.c image.c intro.c menuMain.c font.c game.c sfx.c\
-		   tetros.c score.c menuHighScore.c menuOpts.c menuGameOver.c)
+		   tetros.c score.c menuHighScore.c menuOpts.c menuGameOver.c menuHelp.c)
 SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 SDL_PATH = ./SDL2.framework/Versions/Current

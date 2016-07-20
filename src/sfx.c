@@ -99,7 +99,7 @@ Sint32 sfxInit(void) {
 		"sfx/typea.wav",
 		"sfx/typeb.wav",
 		"sfx/typec.wav",
-		"sfx/typeawesome.wav",
+		"sfx/mario.wav",
 	};
 	int i;
 
@@ -134,6 +134,34 @@ void sfxStopAllAudio(void) {
 		gSfxBuf[i].nSfx = SFX_PLAY_NONE;
 		gSfxBuf[i].nLen = 0;
 		gSfxBuf[i].nPos = 0;
+	}
+	SDL_UnlockAudio();
+}
+
+void sfxStopMusic(void) {
+	int i;
+
+	SDL_LockAudio();
+	for (i = 0; i < SFX_SAMPLES; i++) {
+		if (gSfxBuf[i].nSfx >= SFX_PLAY_TYPEA && gSfxBuf[i].nSfx <= SFX_PLAY_MARIO) {
+			gSfxBuf[i].nSfx = SFX_PLAY_NONE;
+			gSfxBuf[i].nLen = 0;
+			gSfxBuf[i].nPos = 0;
+		}
+	}
+	SDL_UnlockAudio();
+}
+
+void sfxStopSounds(void) {
+	int i;
+
+	SDL_LockAudio();
+	for (i = 0; i < SFX_SAMPLES; i++) {
+		if (gSfxBuf[i].nSfx < SFX_PLAY_TYPEA || gSfxBuf[i].nSfx > SFX_PLAY_MARIO) {
+			gSfxBuf[i].nSfx = SFX_PLAY_NONE;
+			gSfxBuf[i].nLen = 0;
+			gSfxBuf[i].nPos = 0;
+		}
 	}
 	SDL_UnlockAudio();
 }

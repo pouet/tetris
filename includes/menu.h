@@ -9,7 +9,7 @@
 /* ********************************* */
 
 enum {
-	MENU_OFFX = 380,
+	MENU_OFFX = 365,
 	MENU_OFFY = 100,
 	MENU_FONT_SIZE = 21
 };
@@ -68,6 +68,10 @@ Sint32 menuHighScoreRelease(void *pArgs);
 Sint32 menuOptsInit(void *pArgs);
 Sint32 menuOptsMain(void *pArgs);
 Sint32 menuOptsRelease(void *pArgs);
+
+Sint32 menuHelpInit(void *pArgs);
+Sint32 menuHelpMain(void *pArgs);
+Sint32 menuHelpRelease(void *pArgs);
 
 void menuOptsDefault(void);
 
