@@ -19,7 +19,8 @@ enum {
 	TET_HT = 4,
 	CASE_NOTET = MAX_TET,
 	DELAY_TO_LOCK = 20,
-	LINE_PER_LEVEL = 10
+	LINE_PER_LEVEL = 10,
+	SCORE_MAX = 999999
 };
 
 enum {
@@ -82,7 +83,8 @@ typedef struct game_s {
 	Uint32 nTime;
 
 	char pName[256];
-	Uint32 nPos;
+	Sint32 nPos;
+	Sint32 nHigh;
 } game_t;
 
 extern SDL_Point gTetros[MAX_TET][MAX_ROT][NB_TET_BLOCK];
@@ -94,5 +96,9 @@ extern SDL_Point gTetros[MAX_TET][MAX_ROT][NB_TET_BLOCK];
 Sint32 gameInit(void *pArgs);
 Sint32 gameMain(void *pArgs);
 Sint32 gameRelease(void *pArgs);
+
+Sint32 gameOverInit(void *pArgs);
+Sint32 gameOverMain(void *pArgs);
+Sint32 gameOverRelease(void *pArgs);
 
 #endif

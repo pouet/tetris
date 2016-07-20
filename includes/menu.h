@@ -9,6 +9,12 @@
 /* ********************************* */
 
 enum {
+	MENU_OFFX = 380,
+	MENU_OFFY = 100,
+	MENU_FONT_SIZE = 21
+};
+
+enum {
 	FADE_INC = 3,
 	WAIT_1S = FPS
 };

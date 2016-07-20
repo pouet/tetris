@@ -63,9 +63,6 @@ Sint32 menuMainEvents(void *pArgs) {
 	return -1;
 }
 
-#define MENU_OFFX 380
-#define MENU_OFFY 100
-
 void menuMainDraw(void *pArgs) {
 	menu_t *this = pArgs;
 	char *pName[] = {
@@ -78,14 +75,14 @@ void menuMainDraw(void *pArgs) {
 
 	blitTexture(gVars.pBackground, 0, 0, NULL);
 
-	printText("->", 20, FONT_COL_BLUE_BLUE, MENU_OFFX, MENU_OFFY + this->nSelect * 30);
+	printText(">", MENU_FONT_SIZE, FONT_COL_BLUE_BLUE, MENU_OFFX, MENU_OFFY + this->nSelect * 30);
 	for (i = 0; i < this->nSizeMenu; i++) {
 		if (i == this->nSelect)
 			nColor = FONT_COL_WHITE_RED;
 		else
 			nColor = FONT_COL_WHITE_BLUE;
-		printText(pName[i], 20, nColor,
-				MENU_OFFX + 50, MENU_OFFY + i * 30);
+		printText(pName[i], MENU_FONT_SIZE, nColor,
+				MENU_OFFX + 30, MENU_OFFY + i * 30);
 	}
 }
 
@@ -102,8 +99,8 @@ Sint32 menuMainMain(void *pArgs) {
 
 Sint32 menuMainRelease(void *pArgs) {
 	menu_t *this = pArgs;
-	int i;
 
 	free(this->pnVal);
+	sfxPlaySound(SFX_PLAY_ROTATE, SFX_REPEAT_OFF);
 	return 0;
 }

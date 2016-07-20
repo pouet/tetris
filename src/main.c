@@ -225,6 +225,10 @@ int mainLoop(void) {
 				nState = menuLoop(gameInit, gameMain, gameRelease, &game);
 				break;
 
+			case MENU_GAMEOVER:
+				nState = menuLoop(gameOverInit, gameOverMain, gameOverRelease, &game);
+				break;
+
 			case MENU_QUIT:
 				nLoop = 0;
 				break;

@@ -4,8 +4,8 @@
 #include "SDL.h"
 
 #define SCORE_FILE "score.sc"
-#define NAME_LEN 15
-#define MAX_SCORE 10
+#define NAME_LEN 6
+#define NB_SCORE 20
 
 #pragma pack(1)
 
@@ -15,7 +15,7 @@ struct player_s {
 };
 
 typedef struct score_s {
-	struct player_s pPlayer[MAX_SCORE];
+	struct player_s pPlayer[NB_SCORE];
 } score_t;
 
 score_t loadScore(void);

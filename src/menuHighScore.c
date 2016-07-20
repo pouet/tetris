@@ -3,15 +3,14 @@
 #include "score.h"
 #include "menu.h"
 #include "font.h"
+#include "sfx.h"
 
 Sint32 menuHighScoreInit(void *pArgs) {
 	menu_t *this = pArgs;
 
 	eventClear();
 
-	SDL_SetRenderDrawColor(gVars.pRen, 0xAB, 0xCD, 0xEF, 0x00);
 	bzero(this, sizeof(*this));
-	bzero(gVars.nKeyb, sizeof gVars.nKeyb);
 
 	return 0;
 }
@@ -20,6 +19,7 @@ Sint32 menuHighScoreRelease(void *pArgs) {
 	menu_t *this = pArgs;
 
 	(void)this;
+	sfxPlaySound(SFX_PLAY_ROTATE, SFX_REPEAT_OFF);
 	return 0;
 }
 
@@ -43,15 +43,25 @@ Sint32 menuHighScoreMain(void *pArgs) {
 
 	(void)this;
 
-	SDL_RenderFillRect(gVars.pRen, NULL);
+	blitTexture(gVars.pBackground, 0, 0, NULL);
 
-	for (i = 0; i < MAX_SCORE; i++) {
+	for (i = 0; i < NB_SCORE; i++) {
 		if (gVars.sScore.pPlayer[i].nScore == 0)
-			sprintf(s, "%-15s   :   %s", "----", "----");
+			sprintf(s, "%-6.6s %s", "----", "----");
 		else
-			sprintf(s, "%-15s   :   %u",
+			sprintf(s, "%-6.6s %u",
 				gVars.sScore.pPlayer[i].pName, gVars.sScore.pPlayer[i].nScore);
-		printText(s, 30, FONT_COL_BLUE_BLUE, 100, 100 + 50 * i);
+
+		if (gVars.sScore.pPlayer[i].nScore == 0)
+			strcpy(s, "----");
+		else
+			strncpy(s, gVars.sScore.pPlayer[i].pName, NAME_LEN);
+		s[NAME_LEN] = '\0';
+		printText(s, MENU_FONT_SIZE, FONT_COL_BLUE_BLUE, MENU_OFFX, MENU_OFFY + 30 * i);
+
+		if (gVars.sScore.pPlayer[i].nScore > 0)
+			sprintf(s, "%.6u", gVars.sScore.pPlayer[i].nScore);
+		printText(s, MENU_FONT_SIZE, FONT_COL_CYAN_BLUE, MENU_OFFX + 150, MENU_OFFY + 30 * i);
 	}
 
 	if (menuHighScoreEvents(pArgs) >= 0)

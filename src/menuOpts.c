@@ -32,6 +32,7 @@ Sint32 menuOptsRelease(void *pArgs) {
 	menu_t *this = pArgs;
 
 	(void)this;
+	sfxPlaySound(SFX_PLAY_ROTATE, SFX_REPEAT_OFF);
 	return 0;
 }
 
@@ -121,17 +122,16 @@ Sint32 menuOptsEvents(void *pArgs) {
 
 	if (gVars.nKeyb[KEY_SPACE])
 		return 0;
+	else if (gVars.nKeyb[KEY_C])
+		return 1;
 
 	return -1;
 }
 
-#define MENU_OFFX 360
-#define MENU_OFFY 100
-
 Sint32 menuOptsMain(void *pArgs) {
 	menu_t *this = pArgs;
 	char s[128] = "";
-	Sint32 i;
+	Sint32 i, nEv;
 	Sint32 nRet = MENU_NULL;
 
 	char *pNameOpts[] = {
@@ -154,15 +154,18 @@ Sint32 menuOptsMain(void *pArgs) {
 
 	(void)this;
 
-	if (menuOptsEvents(pArgs) >= 0)
+	nEv = menuOptsEvents(pArgs);
+	if (nEv == 0)
 		nRet = MENU_GAME;
+	else if (nEv == 1)
+		nRet = MENU_MAIN;
 
 	blitTexture(gVars.pBackground, 0, 0, NULL);
 
-	printText("->", 20, FONT_COL_BLUE_BLUE, MENU_OFFX, MENU_OFFY + 50 * this->nSelect);
+	printText(">", MENU_FONT_SIZE, FONT_COL_BLUE_BLUE, MENU_OFFX, MENU_OFFY + 50 * this->nSelect);
 	for (i = 0; i < this->nSizeMenu; i++) {
 		sprintf(s, "%-15s", pNameOpts[i]);
-		printText(s, 20, FONT_COL_WHITE_RED, MENU_OFFX + 50, MENU_OFFY + 50 * i);
+		printText(s, MENU_FONT_SIZE, FONT_COL_WHITE_RED, MENU_OFFX + 30, MENU_OFFY + 50 * i);
 		switch (i) {
 			case 0:
 				strcpy(s, gOpts.nSfxSound ? "on" : "off");
@@ -180,10 +183,10 @@ Sint32 menuOptsMain(void *pArgs) {
 				s[0] = '\0';
 				break;
 		}
-		printText(s, 20, FONT_COL_WHITE_BLUE, MENU_OFFX + 180, MENU_OFFY + 50 * i);
+		printText(s, MENU_FONT_SIZE, FONT_COL_WHITE_BLUE, MENU_OFFX + 150, MENU_OFFY + 50 * i);
 	}
-	printText("Press SPACE", 20, FONT_COL_WHITE_RED, MENU_OFFX + 45, 600);
-	printText("to start", 20, FONT_COL_WHITE_RED, MENU_OFFX + 80, 630);
+	printText("Press SPACE", MENU_FONT_SIZE, FONT_COL_WHITE_RED, MENU_OFFX + 25, 600);
+	printText("to start", MENU_FONT_SIZE, FONT_COL_WHITE_RED, MENU_OFFX + 60, 630);
 
 	return nRet;
 }

@@ -172,12 +172,6 @@ void gameDrawText(game_t *this) {
 	printText("Time", 20, FONT_COL_WHITE_BLUE, 800, 530);
 	sprintf(s, "%02d:%02d", (this->nTime / FPS) / 60, (this->nTime / FPS) % 60);
 	printText(s, 20, FONT_COL_WHITE_GREY, 800, 560);
-
-	// TODO: a enlever
-	if (this->nState == GAME_GAMEOVER) {
-		printText("high score !", 20, FONT_COL_CYAN_BLUE, 500, 50);
-		printText(this->pName, 20, FONT_COL_BLUE_BLUE, 500, 100);
-	}
 }
 
 void gameDraw(game_t *this) {
@@ -408,6 +402,8 @@ void gamePieceLock(game_t *this) {
 	gameAnchorPiece(this);
 	nLine = delFullLine(this);
 	this->nScore += pnScore[nLine] * this->nLevel;
+	if (this->nScore > SCORE_MAX)
+		this->nScore = SCORE_MAX;
 	this->nLine += nLine;
 	if (this->nLevel < MAX_LEVEL && this->nLine > this->nLevel * LINE_PER_LEVEL) {
 		this->nLevel++;
@@ -527,6 +523,7 @@ Sint32 gameMain(void *pArgs) {
 			break;
 
 		case GAME_GAMEOVER:
+			if (0)
 			{
 				Sint32 nHigh;
 
@@ -561,6 +558,7 @@ Sint32 gameMain(void *pArgs) {
 				}
 
 			}
+			nRet = MENU_GAMEOVER;
 			break;
 
 		default:
