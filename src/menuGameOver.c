@@ -77,9 +77,8 @@ Sint32 gameOverEvents(void *pArgs) {
 		gVars.nKeyb[KEY_RIGHT] = KEY_NONE;
 	}
 
-	if (this->nPos >= NAME_LEN) {
+	if (this->nPos >= NAME_LEN)
 		return 0;
-	}
 
 	return -1;
 }
@@ -91,11 +90,12 @@ void gameOverDraw(game_t *this) {
 	blitTexture(gVars.pBackground, 0, 0, NULL);
 
 	if (this->nHigh >= 0) {
-		printText("high score !", MENU_FONT_SIZE, FONT_COL_CYAN_BLUE, MENU_OFFX, MENU_OFFY);
+		printText("new high score", MENU_FONT_SIZE, FONT_COL_WHITE_RED, MENU_OFFX, MENU_OFFY);
 		for (i = 0; i < NAME_LEN; i++)
 			s[i] = NAME_LETTERS[(Uint8)this->pName[i]];
-		printText(s, MENU_FONT_SIZE, FONT_COL_BLUE_BLUE, MENU_OFFX, MENU_OFFY + 30);
-		printText("-", MENU_FONT_SIZE, FONT_COL_BLUE_BLUE, MENU_OFFX + this->nPos * MENU_FONT_SIZE, MENU_OFFY + 50);
+		printText("name:", MENU_FONT_SIZE, FONT_COL_BLUE_BLUE, MENU_OFFX, MENU_OFFY + 60);
+		printText(s, MENU_FONT_SIZE, FONT_COL_CYAN_BLUE, MENU_OFFX + 110, MENU_OFFY + 60);
+		printText("-", MENU_FONT_SIZE, FONT_COL_CYAN_BLUE, MENU_OFFX + 110 + this->nPos * MENU_FONT_SIZE, MENU_OFFY + 80);
 	}
 	else {
 		printText("! game over !", 24, FONT_COL_BLUE_BLUE, PLAYGRID_OFFX, (32 * GRID_HT) / 2);

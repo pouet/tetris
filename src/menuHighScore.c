@@ -54,11 +54,13 @@ Sint32 menuHighScoreMain(void *pArgs) {
 
 		strncpy(s, gVars.sScore.pPlayer[i].pName, NAME_LEN);
 		s[NAME_LEN] = '\0';
-		printText(s, MENU_FONT_SIZE, FONT_COL_WHITE_RED, MENU_OFFX + 10, MENU_OFFY + 30 * i);
+		printText(s, MENU_FONT_SIZE, FONT_COL_BLUE_BLUE, MENU_OFFX + 10, MENU_OFFY + 30 * i);
 
 		sprintf(s, "%.6u", gVars.sScore.pPlayer[i].nScore);
-		printText(s, MENU_FONT_SIZE, FONT_COL_WHITE_BLUE, MENU_OFFX + 160, MENU_OFFY + 30 * i);
+		printText(s, MENU_FONT_SIZE, FONT_COL_CYAN_BLUE, MENU_OFFX + 160, MENU_OFFY + 30 * i);
 	}
+	if (i == 0)
+		printText("no high score", MENU_FONT_SIZE, FONT_COL_CYAN_BLUE, MENU_OFFX + 10, MENU_OFFY);
 
 	if (menuHighScoreEvents(pArgs) >= 0)
 		return MENU_MAIN;
