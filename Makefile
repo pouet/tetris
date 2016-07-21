@@ -1,4 +1,4 @@
-SRC_NAME = $(sort main.c frame.c image.c intro.c menuMain.c font.c game.c sfx.c\
+SRC_NAME = $(sort main.c frame.c intro.c menuMain.c font.c game.c sfx.c\
 		   tetros.c score.c menuHighScore.c menuOpts.c menuGameOver.c menuHelp.c\
 		   menuCredits.c)
 SRC_PATH = ./src/
@@ -12,7 +12,7 @@ OBJ = $(addprefix $(OBJ_PATH),$(OBJ_NAME))
 INC = $(addprefix -I,$(INC_PATH))
 
 CC = gcc
-CFLAGS = -Wall -Wextra -O3
+CFLAGS = -Wall -Wextra -pedantic -O3
 LDFLAGS = $(addprefix -L,$(LIBFT_PATH) $(MLX_PATH) $(SDL_PATH))
 LDLIBS = -F . -framework SDL2
 NAME = tetris

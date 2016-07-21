@@ -21,7 +21,7 @@ Sint32 menuOptsInit(void *pArgs) {
 	menuOptsDefault();
 	eventClear();
 
-	bzero(this, sizeof(*this));
+	memset(this, 0, sizeof *this);
 	sfxPlaySound(SFX_PLAY_TYPEA + gOpts.nSfxMusic - 1, SFX_REPEAT_ON);
 
 	this->nSizeMenu = 4;
@@ -37,7 +37,7 @@ Sint32 menuOptsRelease(void *pArgs) {
 	return 0;
 }
 
-void changeValue(menu_t *this) {
+static void changeValue(menu_t *this) {
 	Sint32 nInc = 1;
 	Sint32 *pVal;
 	Sint32 min, max;
@@ -54,7 +54,7 @@ void changeValue(menu_t *this) {
 		case 1:
 			pVal = (Sint32*) &gOpts.nSfxMusic;
 			min = 0;
-			max = 4;
+			max = 3;
 			break;
 		case 2:
 			pVal = (Sint32*) &gOpts.nLevelStart;
@@ -82,7 +82,7 @@ void changeValue(menu_t *this) {
 	}
 }
 
-Sint32 menuOptsEvents(void *pArgs) {
+static Sint32 menuOptsEvents(void *pArgs) {
 	menu_t *this = pArgs;
 	int i;
 
@@ -146,16 +146,15 @@ Sint32 menuOptsMain(void *pArgs) {
 		"Level",
 		"Ghost"
 	};
-	char *pValOptsMusic[64] = {
+	char *pValOptsMusic[] = {
 		"off",
 		"typea",
 		"typeb",
-		"typec",
-		"mario"
+		"typec"
 	};
 
 	// on / off
-	// off - typea - typeb - typec - mario
+	// off - typea - typeb - typec
 	// 1 - MAX_LEVEL
 	// on / off
 

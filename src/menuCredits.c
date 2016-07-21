@@ -22,7 +22,7 @@ Sint32 menuCreditsRelease(void *pArgs) {
 	return 0;
 }
 
-Sint32 menuCreditsEvents(void *pArgs) {
+static Sint32 menuCreditsEvents(void *pArgs) {
 	menu_t *this = pArgs;
 
 	(void)this;

@@ -1,7 +1,9 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include <SDL.h>
+/* ********************************* */
+/* *          Constantes           * */
+/* ********************************* */
 
 enum {
 	FONT_DEFAULT_SIZE = 8,

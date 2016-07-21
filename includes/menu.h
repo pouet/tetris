@@ -2,7 +2,6 @@
 #define MENU_H
 
 #include <SDL.h>
-#include "frame.h"
 
 /* ********************************* */
 /* *          Constantes           * */
@@ -40,11 +39,6 @@ typedef struct menu_s {
 	Sint32 nSelect;
 	Sint32 nDelay;
 
-	/* anim gauche droite */
-	Sint32 nOffSelect;
-	Sint32 nOffIncr;
-
-	SDL_Texture **pTex;
 	Sint32 *pnVal;
 	Sint32 nSizeMenu;
 } menu_t;

@@ -21,7 +21,7 @@ Sint32 menuMainInit(void *pArgs) {
 
 	eventClear();
 
-	bzero(this, sizeof(*this));
+	memset(this, 0, sizeof *this);
 
 	this->nSizeMenu = nSize;
 	this->pnVal = malloc(nSize * sizeof *this->pnVal);
@@ -31,7 +31,7 @@ Sint32 menuMainInit(void *pArgs) {
 	return 0;
 }
 
-Sint32 menuMainEvents(void *pArgs) {
+static Sint32 menuMainEvents(void *pArgs) {
 	menu_t *this = pArgs;
 	int i;
 
@@ -65,7 +65,7 @@ Sint32 menuMainEvents(void *pArgs) {
 	return -1;
 }
 
-void menuMainDraw(void *pArgs) {
+static void menuMainDraw(void *pArgs) {
 	menu_t *this = pArgs;
 	char *pName[] = {
 		"Play",

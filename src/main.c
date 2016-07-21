@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <time.h>
 #include <SDL.h>
 #include "tetris.h"
 #include "frame.h"
@@ -10,16 +8,16 @@
 
 struct gVars_s gVars;
 
-void	quitVideo(void) {
+void quitVideo(void) {
 	SDL_DestroyRenderer(gVars.pRen);
 	SDL_DestroyWindow(gVars.pWin);
 }
 
-void	quit(void) {
+void quit(void) {
 	saveScore();
 }
 
-int		initVideo(void) {
+int initVideo(void) {
 	if (SDL_Init(SDL_FLAGS) < 0) {
 		fprintf(stderr, "SDL_Init : %s\n", SDL_GetError());
 		return -1;
@@ -66,20 +64,20 @@ SDL_Texture *loadBMP(char *s) {
 	return pTex;
 }
 
-int		initGVars(void) {
+int	initGVars(void) {
 	gVars.nScrW = WIN_W;
 	gVars.nScrH = WIN_H;
 	gVars.pKeyb = SDL_GetKeyboardState(NULL);
 	gVars.pTetsImg = loadBMP("gfx/tets.bmp");
 	gVars.pFont = loadBMP("gfx/font.bmp");
 	gVars.pIntroImg = loadBMP("gfx/intro.bmp");
-	gVars.pTetrisLogo = loadBMP("gfx/tetris_logo.bmp");
 	gVars.pBackground = loadBMP("gfx/background.bmp");
 	gVars.sScore = loadScore();
+
 	return 0;
 }
 
-int		init(void) {
+int	init(void) {
 	if (initVideo() < 0)
 		return -1;
 	srand(time(NULL));
@@ -109,7 +107,7 @@ void blitTexture(SDL_Texture *pTex, int x, int y, SDL_Rect *rClip) {
 }
 
 /* SDLK_LAST no more exists... leave me alone... */
-int		eventHandler(void) {
+int	eventHandler(void) {
 	SDL_Event ev;
 
 	while (SDL_PollEvent(&ev)) {
@@ -214,7 +212,7 @@ int mainLoop(void) {
 	return 0;
 }
 
-int		main(void) {
+int	main(void) {
 	if (init() < 0)
 		return EXIT_FAILURE;
 

@@ -30,13 +30,13 @@ score_t loadScore(void) {
 	FILE *pFile;
 	score_t sScore;
 
-	bzero(&sScore, sizeof sScore);
+	memset(&sScore, 0, sizeof sScore);
 	pFile = fopen(SCORE_FILE, "r");
 	if (pFile == NULL)
 		return sScore;
 	if (fread(sScore.pPlayer, sizeof sScore.pPlayer[0], NB_SCORE, pFile) != NB_SCORE) {
 		fprintf(stderr, "Failed to open scores... reseting scores\n");
-		bzero(&sScore, sizeof sScore);
+		memset(&sScore, 0, sizeof sScore);
 		fclose(pFile);
 		return sScore;
 	}

@@ -38,7 +38,7 @@ void sfxMixAudio(void *data, Uint8 *stream, int len) {
 
 	(void)data;
 
-	bzero(stream, len);
+	memset(stream, 0, len);
 
 	for (i = 0; i < SFX_SAMPLES; i++) {
 		if (gSfxBuf[i].nSfx != SFX_PLAY_NONE) {
@@ -57,7 +57,7 @@ void sfxMixAudio(void *data, Uint8 *stream, int len) {
 	}
 }
 
-SDL_AudioCVT loadWAV(char *file) {
+static SDL_AudioCVT loadWAV(char *file) {
 	SDL_AudioSpec sndFile;
 	SDL_AudioCVT cvt;
 	Uint8 *pSndData;
@@ -98,8 +98,7 @@ Sint32 sfxInit(void) {
 		"sfx/tetris.wav",
 		"sfx/typea.wav",
 		"sfx/typeb.wav",
-		"sfx/typec.wav",
-		"sfx/mario.wav",
+		"sfx/typec.wav"
 	};
 	int i;
 
@@ -121,7 +120,6 @@ Sint32 sfxInit(void) {
 
 	/* Let's do it !!! */
 	SDL_PauseAudio(0);
-//	SDL_PauseAudio(1);
 
 	return 0;
 }
@@ -143,7 +141,7 @@ void sfxStopMusic(void) {
 
 	SDL_LockAudio();
 	for (i = 0; i < SFX_SAMPLES; i++) {
-		if (gSfxBuf[i].nSfx >= SFX_PLAY_TYPEA && gSfxBuf[i].nSfx <= SFX_PLAY_MARIO) {
+		if (gSfxBuf[i].nSfx >= SFX_PLAY_TYPEA && gSfxBuf[i].nSfx <= SFX_PLAY_TYPEC) {
 			gSfxBuf[i].nSfx = SFX_PLAY_NONE;
 			gSfxBuf[i].nLen = 0;
 			gSfxBuf[i].nPos = 0;
@@ -157,7 +155,7 @@ void sfxStopSounds(void) {
 
 	SDL_LockAudio();
 	for (i = 0; i < SFX_SAMPLES; i++) {
-		if (gSfxBuf[i].nSfx < SFX_PLAY_TYPEA || gSfxBuf[i].nSfx > SFX_PLAY_MARIO) {
+		if (gSfxBuf[i].nSfx < SFX_PLAY_TYPEA || gSfxBuf[i].nSfx > SFX_PLAY_TYPEC) {
 			gSfxBuf[i].nSfx = SFX_PLAY_NONE;
 			gSfxBuf[i].nLen = 0;
 			gSfxBuf[i].nPos = 0;

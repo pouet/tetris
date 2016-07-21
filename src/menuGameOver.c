@@ -30,7 +30,7 @@ Sint32 gameOverRelease(void *pArgs) {
 	return 0;
 }
 
-Sint32 gameOverEvents(void *pArgs) {
+static Sint32 gameOverEvents(void *pArgs) {
 	static Sint32 nLenLetters = strlen(NAME_LETTERS);
 	game_t *this = pArgs;
 	int i;
@@ -83,7 +83,7 @@ Sint32 gameOverEvents(void *pArgs) {
 	return -1;
 }
 
-void gameOverDraw(game_t *this) {
+static void gameOverDraw(game_t *this) {
 	char s[NAME_LEN + 1] = "";
 	int i;
 

@@ -74,7 +74,7 @@ typedef struct game_s {
 	Sint32 nRow;
 	Sint32 nCol;
 
-	Sint32 nInc;
+	Sint32 nInc; /* delay avant de descendre une ligne (frame/sec) */
 	Sint32 nDelay; /* Delay avant de poser la piece */
 
 	Uint32 nLevel;
@@ -86,6 +86,10 @@ typedef struct game_s {
 	Sint32 nPos;
 	Sint32 nHigh;
 } game_t;
+
+/* ********************************* */
+/* *           Globales            * */
+/* ********************************* */
 
 extern SDL_Point gTetros[MAX_TET][MAX_ROT][NB_TET_BLOCK];
 
@@ -100,5 +104,30 @@ Sint32 gameRelease(void *pArgs);
 Sint32 gameOverInit(void *pArgs);
 Sint32 gameOverMain(void *pArgs);
 Sint32 gameOverRelease(void *pArgs);
+
+Sint32 getNextPiece(void);
+Sint32 isPosValid(game_t *this, Sint32 nTet, Sint32 nRot, Sint32 nRow, Sint32 nCol);
+
+void gameDraw(game_t *this);
+void blitOneBlock(Sint32 nTet, int row, int col, int y, int x);
+void gameDrawTetro(Sint32 nTet, Sint32 nRot, int row, int col);
+void gameDrawGhost(game_t *this);
+void gameDrawText(game_t *this);
+
+void gameAnchorPiece(game_t *this);
+void movePiece(game_t *this, Uint32 nKey, Sint32 nInc);
+void rotatePiece(game_t *this);
+void hardDrop(game_t *this);
+void softDrop(game_t *this);
+void holdPiece(game_t *this);
+
+void processEvents(game_t *this);
+Sint32 eventsGamePaused(game_t *this);
+
+Uint32 delFullLine(game_t *this);
+void gamePieceLock(game_t *this);
+Sint32 gamePieceDown(game_t *this);
+Sint32 gameNormal(game_t *this);
+void gameAnimGrid(game_t *this, Uint32 nNextState);
 
 #endif

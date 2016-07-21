@@ -1,6 +1,10 @@
 #ifndef SFX_H
 #define SFX_H
 
+/* ********************************* */
+/* *          Constantes           * */
+/* ********************************* */
+
 enum {
 	SFX_FREQ = 44100,
 	SFX_FORMAT = AUDIO_S16SYS,
@@ -20,7 +24,6 @@ enum {
 	SFX_PLAY_TYPEA,
 	SFX_PLAY_TYPEB,
 	SFX_PLAY_TYPEC,
-	SFX_PLAY_MARIO,
 	SFX_PLAY_MAX
 };
 
@@ -28,6 +31,10 @@ enum {
 	SFX_REPEAT_OFF,
 	SFX_REPEAT_ON
 };
+
+/* ********************************* */
+/* *          Structures           * */
+/* ********************************* */
 
 struct gSfxBuf_s {
 	Uint8 *pData;
@@ -37,10 +44,20 @@ struct gSfxBuf_s {
 	Uint8 nSfx;
 };
 
+/* ********************************* */
+/* *           Globales            * */
+/* ********************************* */
+ 
 extern struct gSfxBuf_s gSfxBuf[SFX_SAMPLES];
 extern struct SDL_AudioCVT gpSound[SFX_PLAY_MAX];
 
+/* ********************************* */
+/* *          Prototypes           * */
+/* ********************************* */
+
 Sint32 sfxInit(void);
+// TODO: release...
+
 void sfxPlaySound(Uint8 nSndNum, int nRepeat);
 void sfxStopAllAudio(void);
 void sfxPauseAudio(void);

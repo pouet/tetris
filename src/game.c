@@ -53,7 +53,7 @@ Sint32 gameInit(void *pArgs) {
 
 	eventClear();
 
-	bzero(this, sizeof *this);
+	memset(this, 0, sizeof *this);
 	for (i = 0; i < GRID_HT; i++)
 		for (j = 0; j < GRID_LG; j++)
 			this->tGrid[i][j] = CASE_NOTET;
@@ -490,7 +490,7 @@ void gameAnimGrid(game_t *this, Uint32 nNextState) {
 		this->nStart = 0;
 	}
 }
-#include "score.h"
+
 Sint32 gameMain(void *pArgs) {
 	game_t *this = pArgs;
 	Sint32 nRet = MENU_NULL;
@@ -515,41 +515,6 @@ Sint32 gameMain(void *pArgs) {
 			break;
 
 		case GAME_GAMEOVER:
-			if (0)
-			{
-				Sint32 nHigh;
-
-				nHigh = isHighScore(this->nScore);
-				if (nHigh < 0)
-					nRet = MENU_MAIN;
-				else {
-					if (this->pName[this->nPos] == '\0')
-						this->pName[this->nPos] = 'A';
-
-					if (gVars.nKeyb[KEY_UP]) {
-						this->pName[this->nPos]++;
-						if (this->pName[this->nPos] > '~')
-							this->pName[this->nPos] = ' ';
-						gVars.nKeyb[KEY_UP] = KEY_NONE;
-					}
-					if (gVars.nKeyb[KEY_DOWN]) {
-						this->pName[this->nPos]--;
-						if (this->pName[this->nPos] < ' ')
-							this->pName[this->nPos] = '~';
-						gVars.nKeyb[KEY_DOWN] = KEY_NONE;
-					}
-					if (gVars.nKeyb[KEY_SPACE]) {
-						this->nPos++;
-						gVars.nKeyb[KEY_SPACE] = KEY_NONE;
-					}
-
-					if (this->nPos >= NAME_LEN) {
-						scoreAdd(nHigh, this->nScore, this->pName);
-						nRet = MENU_MAIN;
-					}
-				}
-
-			}
 			nRet = MENU_GAMEOVER;
 			break;
 
@@ -558,7 +523,7 @@ Sint32 gameMain(void *pArgs) {
 			exit(EXIT_FAILURE);
 			break;
 	}
-// TODO: score
+
 	gameDraw(this);
 	return nRet;
 }

@@ -10,7 +10,7 @@ Sint32 menuHighScoreInit(void *pArgs) {
 
 	eventClear();
 
-	bzero(this, sizeof(*this));
+	memset(this, 0, sizeof *this);
 
 	return 0;
 }
@@ -23,7 +23,7 @@ Sint32 menuHighScoreRelease(void *pArgs) {
 	return 0;
 }
 
-Sint32 menuHighScoreEvents(void *pArgs) {
+static Sint32 menuHighScoreEvents(void *pArgs) {
 	menu_t *this = pArgs;
 
 	(void)this;

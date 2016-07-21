@@ -2,6 +2,10 @@
 #define TETRIS_H
 
 #include <SDL.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include "score.h"
  
 /* ********************************* */
@@ -73,7 +77,6 @@ struct gVars_s {
 	SDL_Texture		*pTetsImg;
 	SDL_Texture		*pFont;
 	SDL_Texture		*pIntroImg;
-	SDL_Texture		*pTetrisLogo;
 	SDL_Texture		*pBackground;
 
 	score_t			sScore;
@@ -97,6 +100,21 @@ extern struct gVars_s gVars;
 /* ********************************* */
 /* *          Prototypes           * */
 /* ********************************* */
+
+int	init(void);
+int initVideo(void);
+int	initGVars(void);
+void quit(void);
+void quitVideo(void);
+
+int	eventHandler(void);
+void eventClear(void);
+
+/* fonction generique qui gere tous les etats du jeu */
+menu_e menuLoop(pFct pInit, pFct pMain, pFct pRelease, void *pArgs);
+int mainLoop(void);
+
+SDL_Texture *loadBMP(char *s);
 
 void renderFlip(void);
 void blitTexture(SDL_Texture *pTex, int x, int y, SDL_Rect *rClip);

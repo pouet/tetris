@@ -22,7 +22,7 @@ Sint32 menuHelpRelease(void *pArgs) {
 	return 0;
 }
 
-Sint32 menuHelpEvents(void *pArgs) {
+static Sint32 menuHelpEvents(void *pArgs) {
 	menu_t *this = pArgs;
 
 	(void)this;

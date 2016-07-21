@@ -8,7 +8,7 @@ Sint32 menuIntroInit(void *pArgs) {
 
 	eventClear();
 
-	bzero(this, sizeof(*this));
+	memset(this, 0, sizeof *this);
 	this->nFade = SDL_ALPHA_TRANSPARENT;
 	this->state = INTRO_FADEIN;
 	this->ticks = 0;
