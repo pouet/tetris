@@ -1,4 +1,4 @@
-#include "SDL.h"
+#include <SDL.h>
 #include "tetris.h"
 
 static Uint32 gnTimer;

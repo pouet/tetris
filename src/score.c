@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "SDL.h"
+#include <SDL.h>
 #include "tetris.h"
 #include "score.h"
 #include "game.h"

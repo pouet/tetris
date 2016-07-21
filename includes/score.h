@@ -1,7 +1,7 @@
 #ifndef SCORE_H
 #define SCORE_H
 
-#include "SDL.h"
+#include <SDL.h>
 
 #define SCORE_FILE "score.sc"
 #define NAME_LEN 6

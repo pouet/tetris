@@ -1,4 +1,4 @@
-#include "SDL.h"
+#include <SDL.h>
 #include "tetris.h"
 #include "game.h"
 #include "font.h"

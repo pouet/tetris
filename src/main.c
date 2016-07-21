@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <time.h>
-#include "SDL.h"
+#include <SDL.h>
 #include "tetris.h"
 #include "frame.h"
 #include "menu.h"

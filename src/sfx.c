@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "SDL.h"
+#include <SDL.h>
 #include "tetris.h"
 #include "sfx.h"
 

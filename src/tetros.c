@@ -1,4 +1,4 @@
-#include "SDL.h"
+#include <SDL.h>
 #include "game.h"
 
 SDL_Point gTetros[MAX_TET][MAX_ROT][NB_TET_BLOCK] = {

@@ -1,7 +1,7 @@
 #ifndef TETRIS_H
 #define TETRIS_H
 
-#include "SDL.h"
+#include <SDL.h>
 #include "score.h"
  
 /* ********************************* */
