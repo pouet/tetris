@@ -1,4 +1,3 @@
-#include <string.h>
 #include <SDL.h>
 #include "tetris.h"
 #include "font.h"

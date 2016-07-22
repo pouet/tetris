@@ -144,7 +144,8 @@ Sint32 menuOptsMain(void *pArgs) {
 		"Sound",
 		"Music",
 		"Level",
-		"Ghost"
+		"Ghost",
+		""
 	};
 	char *pValOptsMusic[] = {
 		"off",

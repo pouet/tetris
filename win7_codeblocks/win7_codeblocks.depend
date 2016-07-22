@@ -1,0 +1,100 @@
+# depslib dependency file v1.0
+1469190055 source:c:\users\pouet\documents\prog\sdl\tetris\src\frame.c
+	<SDL.h>
+	"tetris.h"
+
+1469190055 source:c:\users\pouet\documents\prog\sdl\tetris\src\game.c
+	<SDL.h>
+	"tetris.h"
+	"game.h"
+	"font.h"
+	"sfx.h"
+
+1469190055 source:c:\users\pouet\documents\prog\sdl\tetris\src\intro.c
+	<SDL.h>
+	"tetris.h"
+	"frame.h"
+	"menu.h"
+
+1469190055 source:c:\users\pouet\documents\prog\sdl\tetris\src\main.c
+	<SDL.h>
+	"tetris.h"
+	"frame.h"
+	"menu.h"
+	"game.h"
+	"sfx.h"
+	"score.h"
+
+1469190056 source:c:\users\pouet\documents\prog\sdl\tetris\src\menucredits.c
+	<SDL.h>
+	"tetris.h"
+	"score.h"
+	"menu.h"
+	"font.h"
+	"sfx.h"
+
+1469190056 source:c:\users\pouet\documents\prog\sdl\tetris\src\menuhelp.c
+	<SDL.h>
+	"tetris.h"
+	"score.h"
+	"menu.h"
+	"font.h"
+	"sfx.h"
+
+1469190056 source:c:\users\pouet\documents\prog\sdl\tetris\src\menuhighscore.c
+	<SDL.h>
+	"tetris.h"
+	"score.h"
+	"menu.h"
+	"font.h"
+	"sfx.h"
+
+1469190056 source:c:\users\pouet\documents\prog\sdl\tetris\src\menumain.c
+	<SDL.h>
+	"tetris.h"
+	"frame.h"
+	"menu.h"
+	"font.h"
+	"sfx.h"
+
+1469190056 source:c:\users\pouet\documents\prog\sdl\tetris\src\menuopts.c
+	<SDL.h>
+	"tetris.h"
+	"score.h"
+	"menu.h"
+	"game.h"
+	"font.h"
+	"sfx.h"
+
+1469190056 source:c:\users\pouet\documents\prog\sdl\tetris\src\score.c
+	<stdio.h>
+	<SDL.h>
+	"tetris.h"
+	"score.h"
+	"game.h"
+
+1469190056 source:c:\users\pouet\documents\prog\sdl\tetris\src\sfx.c
+	<stdlib.h>
+	<string.h>
+	<SDL.h>
+	"tetris.h"
+	"sfx.h"
+
+1469190391 source:c:\users\pouet\documents\prog\sdl\tetris\src\font.c
+	<SDL.h>
+	"tetris.h"
+	"font.h"
+
+1469190424 source:c:\users\pouet\documents\prog\sdl\tetris\src\menugameover.c
+	<SDL.h>
+	"tetris.h"
+	"game.h"
+	"score.h"
+	"menu.h"
+	"font.h"
+	"sfx.h"
+
+1469190056 source:c:\users\pouet\documents\prog\sdl\tetris\src\tetros.c
+	<SDL.h>
+	"game.h"
+

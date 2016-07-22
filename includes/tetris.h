@@ -2,12 +2,13 @@
 #define TETRIS_H
 
 #include <SDL.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include "score.h"
- 
+
 /* ********************************* */
 /* *          Constantes           * */
 /* ********************************* */
@@ -61,7 +62,7 @@ enum {
 };
 
 typedef Sint32 (*pFct)(void *);
- 
+
 /* ********************************* */
 /* *          Structures           * */
 /* ********************************* */
@@ -94,7 +95,7 @@ extern struct gOpts_s gOpts;
 /* ********************************* */
 /* *           Globales            * */
 /* ********************************* */
- 
+
 extern struct gVars_s gVars;
 
 /* ********************************* */

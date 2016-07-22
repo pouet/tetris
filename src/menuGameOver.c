@@ -31,7 +31,7 @@ Sint32 gameOverRelease(void *pArgs) {
 }
 
 static Sint32 gameOverEvents(void *pArgs) {
-	static Sint32 nLenLetters = strlen(NAME_LETTERS);
+	Sint32 nLenLetters = strlen(NAME_LETTERS);
 	game_t *this = pArgs;
 	int i;
 
