@@ -2,23 +2,23 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="win7_codeblocks" />
+		<Option title="tetris" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/win7_codeblocks" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/tetris" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
-				<Option type="1" />
+				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/win7_codeblocks" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/tetris" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
-				<Option type="1" />
+				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
@@ -31,6 +31,55 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="../includes/font.h" />
+		<Unit filename="../includes/frame.h" />
+		<Unit filename="../includes/game.h" />
+		<Unit filename="../includes/menu.h" />
+		<Unit filename="../includes/score.h" />
+		<Unit filename="../includes/sfx.h" />
+		<Unit filename="../includes/tetris.h" />
+		<Unit filename="../src/font.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/frame.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/game.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/intro.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/menuCredits.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/menuGameOver.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/menuHelp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/menuHighScore.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/menuMain.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/menuOpts.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/score.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/sfx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/tetros.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />
